@@ -1,4 +1,5 @@
 #include "compiler.hh"
+
 #include "parser.tab.hh"
 #include "lexer.yy.hh"
 
@@ -11,9 +12,12 @@ namespace compiler {
 std::string compile(std::string const& source)
 {
     output.clear();
-    YY_BUFFER_STATE buf = yy_scan_string(source.c_str());
-    yyparse();
-    yy_delete_buffer(buf);
+
+    yyscan_t scanner;
+    yylex_init(&scanner);
+    YY_BUFFER_STATE buf = yy_scan_string(source.c_str(), scanner);
+    yyparse(scanner);
+    yy_delete_buffer(buf, scanner);
 
     return output.str();
 }

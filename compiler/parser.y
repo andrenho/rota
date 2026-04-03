@@ -1,3 +1,10 @@
+%define api.pure full
+%param { yyscan_t scanner }
+
+%union {
+    int i;
+}
+
 %{
 #include <cstdio>
 #include <string>
@@ -5,13 +12,20 @@
 
 extern std::stringstream output;
 
-void yyerror(const char *s);
-int yylex(void);
+#include "lexer.yy.hh"
+
+void yyerror(yyscan_t scanner, const char *s);
 %}
 
-%token NUMBER
+%code requires {
+    typedef void *yyscan_t;
+}
+
+%token <i> NUMBER
 %left '+' '-'
 %left '*' '/'
+
+%type <i> expr
 
 %%
 
@@ -30,6 +44,6 @@ expr:
 
 %%
 
-void yyerror(const char *s) {
+void yyerror(yyscan_t scanner, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }
