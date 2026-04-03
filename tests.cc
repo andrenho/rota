@@ -1,8 +1,8 @@
-#include <stdio.h>
+#include <iostream>
 
-int yyparse(void);
+#include "compiler/compiler.hh"
 
-int main(void) {
-    printf("Enter expressions (Ctrl+D to quit):\n");
-    return yyparse();
+int main()
+{
+    std::cout << compiler::compile("1 + 4 * 3\n");
 }

@@ -1,6 +1,9 @@
 %{
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <string>
+#include <sstream>
+
+extern std::stringstream output;
 
 void yyerror(const char *s);
 int yylex(void);
@@ -13,17 +16,16 @@ int yylex(void);
 %%
 
 program:
-      program expr '\n'
-    | /* empty */
+      expr '\n'
     ;
 
 expr:
-      expr '+' expr  { printf("\tadd\n"); }
-    | expr '-' expr  { printf("\tsub\n"); }
-    | expr '*' expr  { printf("\tmul\n"); }
-    | expr '/' expr  { printf("\tdiv\n"); }
+      expr '+' expr  { output << "\tadd\n"; }
+    | expr '-' expr  { output << "\tsub\n"; }
+    | expr '*' expr  { output << "\tmul\n"; }
+    | expr '/' expr  { output << "\tdiv\n"; }
     | '(' expr ')'   { $$ = $2; }
-    | NUMBER         { printf("\tpush %d\n", $1); }
+    | NUMBER         { output << "\tpush " << $1 << "\n"; }
     ;
 
 %%

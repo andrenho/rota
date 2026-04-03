@@ -1,0 +1,16 @@
+file = {stat}
+
+stat = assignment
+     | expr
+     ;
+
+assignment = name ':=' expr;
+
+expr = expr '+' expr
+     | expr '-' expr
+     | expr '*' expr
+     | expr '/' expr
+     | '(' expr ')'
+     | NUMBER
+     | name
+     ;
