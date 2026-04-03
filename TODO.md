@@ -1,0 +1,7 @@
+- [ ] Simple expression (single number) - infra
+  - [ ] Lexer
+  - [ ] Parser
+  - [ ] Assembler
+  - [ ] VM
+  - [ ] Create tests
+- [ ] Complex expressions
