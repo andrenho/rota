@@ -1,5 +1,11 @@
+%code requires {
+    typedef void *yyscan_t;
+    #include <sstream>
+}
+
 %define api.pure full
 %param { yyscan_t scanner }
+%parse-param { std::stringstream& output }
 
 %union {
     int i;
@@ -10,16 +16,10 @@
 #include <string>
 #include <sstream>
 
-extern std::stringstream output;
-
 #include "lexer.yy.hh"
 
-void yyerror(yyscan_t scanner, const char *s);
+void yyerror(yyscan_t scanner, std::stringstream&, const char *s);
 %}
-
-%code requires {
-    typedef void *yyscan_t;
-}
 
 %token <i> NUMBER
 %left '+' '-'
@@ -44,6 +44,6 @@ expr:
 
 %%
 
-void yyerror(yyscan_t scanner, const char *s) {
+void yyerror(yyscan_t scanner, std::stringstream&, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }
