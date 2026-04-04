@@ -42,16 +42,16 @@ lines: lines line
 
 line: instruction '\n';
 
-instruction: PUSH   { output.push_back(OP_PUSH);  } value
-           | ADD    { output.push_back(OP_ADD); }
-           | SUB    { output.push_back(OP_SUB); }
-           | MUL    { output.push_back(OP_MUL); }
-           | DIV    { output.push_back(OP_DIV); }
+instruction: PUSH   { output.push_back(OP_PUSH); } value
+           | ADD    { output.push_back(OP_ADD);  }
+           | SUB    { output.push_back(OP_SUB);  }
+           | MUL    { output.push_back(OP_MUL);  }
+           | DIV    { output.push_back(OP_DIV);  }
            | HALT   { output.push_back(OP_HALT); }
            ;
 
 value: INTEGER { output.append_range(types::to_bin($1)); }
-     | FLOAT { output.append_range(types::to_bin($1)); }
+     | FLOAT   { output.append_range(types::to_bin($1)); }
      ;
 
 %%
