@@ -38,8 +38,8 @@ void VM::run_until_halt()
 
 template<typename Op>
 void VM::binary_op(VM& vm, Op op) {
-    Value a = vm.pop();
     Value b = vm.pop();
+    Value a = vm.pop();
     if (H<int>(a) && H<int>(b))
         vm.push(op(std::get<int>(a), std::get<int>(b)));
     else if (H<int>(a) && H<float>(b))

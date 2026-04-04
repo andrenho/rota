@@ -10,7 +10,7 @@
 namespace types {
 
 using Value = std::variant<int, float>;
-enum TypeId : uint8_t { Int = 0, Float = 1 };
+enum TypeId : uint8_t { Int1Byte = 0, Int2Bytes = 1, Int3Bytes = 2, Int4Bytes = 3, Float = 4 };
 
 std::vector<uint8_t> to_bin(int n);
 std::vector<uint8_t> to_bin(float n);

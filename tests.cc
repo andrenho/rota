@@ -48,6 +48,10 @@ int main(int argc, char* argv[])
 
     test("1 + 4 * 3\n", 13, s);
     test("(1 + 4) * 3\n", 15, s);
+    test("1 + 1000\n", 1001, s);
+    test("3 - 1\n", 2, s);
+    test("65 / 5\n", 13, s);
     test("1.2\n", 1.2f, s);
     test("1.2 + 4\n", 5.2f, s);
+    test("1 + 1000.5\n", 1001.5f, s);
 }
