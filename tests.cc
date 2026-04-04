@@ -48,4 +48,5 @@ int main(int argc, char* argv[])
 
     test("1 + 4 * 3\n", 13, s);
     test("(1 + 4) * 3\n", 15, s);
+    test("1.2\n", 0, s);
 }

@@ -3,6 +3,15 @@
 %code requires {
     typedef void *yyscan_t;
     #include <sstream>
+
+    enum ValueType { T_INT, T_FLOAT };
+    struct Value {
+        ValueType type;
+        union {
+            int i;
+            float f;
+        };
+    };
 }
 
 %define api.pure full
@@ -10,7 +19,7 @@
 %parse-param { std::stringstream& output }
 
 %union {
-    int i;
+    Value val;
 }
 
 %{
@@ -23,11 +32,11 @@
 void cperror(yyscan_t scanner, std::stringstream&, const char *s);
 %}
 
-%token <i> NUMBER
+%token <val> VALUE
 %left '+' '-'
 %left '*' '/'
 
-%type <i> expr
+%type <val> expr
 
 %%
 
@@ -41,7 +50,12 @@ expr:
     | expr '*' expr  { output << "\tmul\n"; }
     | expr '/' expr  { output << "\tdiv\n"; }
     | '(' expr ')'   { $$ = $2; }
-    | NUMBER         { output << "\tpush " << $1 << "\n"; }
+    | VALUE          {
+                        switch ($1.type) {
+                            case T_INT: output << "\tpush " << $1.i << "\n"; break;
+                            case T_FLOAT: output << "\tpush " << $1.f << "f\n"; break;
+                        }
+                     }
     ;
 
 %%
