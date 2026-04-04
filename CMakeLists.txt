@@ -40,6 +40,8 @@ add_executable(fortuna_6_tests
         tests.cc
         assembler/assembler.hh assembler/assembler.cc
         compiler/compiler.hh compiler/compiler.cc
+        common/value.hh common/value.cc
+        vm/vm.hh vm/vm.cc
         ${BISON_assembler_parser_OUTPUTS} ${FLEX_assembler_lexer_OUTPUTS}
         ${BISON_compiler_parser_OUTPUTS} ${FLEX_compiler_lexer_OUTPUTS})
 

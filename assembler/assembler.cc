@@ -8,9 +8,9 @@
 
 namespace assembler {
 
-std::string assemble(std::string const& source)
+std::vector<uint8_t> assemble(std::string const& source)
 {
-    std::stringstream output;
+    std::vector<uint8_t> output;
 
     yyscan_t scanner;
     aslex_init(&scanner);
@@ -18,7 +18,7 @@ std::string assemble(std::string const& source)
     asparse(scanner, output);
     as_delete_buffer(buf, scanner);
 
-    return output.str();
+    return output;
 }
 
 }

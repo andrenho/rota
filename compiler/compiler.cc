@@ -20,6 +20,7 @@ std::string compile(std::vector<std::string> const& sources)
         cp_delete_buffer(buf, scanner);
     }
 
+    output << "\thalt\n";
     return output.str();
 }
 

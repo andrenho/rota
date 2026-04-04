@@ -2,12 +2,15 @@
 
 %code requires {
     typedef void *yyscan_t;
-    #include <sstream>
+    #include <cstdint>
+    #include <vector>
+    #include "../common/value.hh"
+    #include "../common/opcodes.hh"
 }
 
 %define api.pure full
 %param { yyscan_t scanner }
-%parse-param { std::stringstream& output }
+%parse-param { std::vector<uint8_t>& output }
 
 %union {
     int i;
@@ -20,32 +23,33 @@
 
 #include "lexer.yy.hh"
 
-void aserror(yyscan_t scanner, std::stringstream&, const char *s);
+void aserror(yyscan_t scanner, std::vector<uint8_t>&, const char *s);
 %}
 
-%token <i> NUMBER
+%token <i>   NUMBER
+%token       PUSH ADD SUB MUL DIV HALT
+
 %left '+' '-'
 %left '*' '/'
 
-%type <i> expr
+%%
+
+lines: lines line
+     | line
+     ;
+
+line: instruction '\n';
+
+instruction: PUSH NUMBER { output.push_back(OP_PUSH); Value::Number($2).add(output); }
+           | ADD         { output.push_back(OP_ADD); }
+           | SUB         { output.push_back(OP_SUB); }
+           | MUL         { output.push_back(OP_MUL); }
+           | DIV         { output.push_back(OP_DIV); }
+           | HALT        { output.push_back(OP_HALT); }
+           ;
 
 %%
 
-program:
-      expr '\n'
-    ;
-
-expr:
-      expr '+' expr  { output << "\tadd\n"; }
-    | expr '-' expr  { output << "\tsub\n"; }
-    | expr '*' expr  { output << "\tmul\n"; }
-    | expr '/' expr  { output << "\tdiv\n"; }
-    | '(' expr ')'   { $$ = $2; }
-    | NUMBER         { output << "\tpush " << $1 << "\n"; }
-    ;
-
-%%
-
-void aserror(yyscan_t scanner, std::stringstream&, const char *s) {
+void aserror(yyscan_t scanner, std::vector<uint8_t>&, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }
