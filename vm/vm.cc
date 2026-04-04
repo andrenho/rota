@@ -3,6 +3,10 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <variant>
+
+using Value = types::Value;
+#define H std::holds_alternative
 
 VM::VM(VMDef&& vmdef)
     : vm_def_(vmdef)
@@ -12,10 +16,10 @@ VM::VM(VMDef&& vmdef)
 
     oper[OP_NOP]  = [](VM&) {};
     oper[OP_PUSH] = [](VM& vm) { vm.push(vm.nextVal()); };
-    oper[OP_ADD]  = [](VM& vm) { vm.push(vm.pop() + vm.pop()); };
-    oper[OP_SUB]  = [](VM& vm) { vm.push(vm.pop() - vm.pop()); };
-    oper[OP_MUL]  = [](VM& vm) { vm.push(vm.pop() * vm.pop()); };
-    oper[OP_DIV]  = [](VM& vm) { vm.push(vm.pop() / vm.pop()); };
+    oper[OP_ADD]  = [](VM& vm) { vm.binary_op(vm, std::plus<>{}); };
+    oper[OP_SUB]  = [](VM& vm) { vm.binary_op(vm, std::minus<>{}); };
+    oper[OP_MUL]  = [](VM& vm) { vm.binary_op(vm, std::multiplies<>{}); };
+    oper[OP_DIV]  = [](VM& vm) { vm.binary_op(vm, std::divides<>{}); };
     oper[OP_HALT] = [](VM& vm) {};
 }
 
@@ -32,30 +36,46 @@ void VM::run_until_halt()
         oper[ram_[PC_++]](*this);
 }
 
-void VM::push(Val32 v)
+template<typename Op>
+void VM::binary_op(VM& vm, Op op) {
+    Value a = vm.pop();
+    Value b = vm.pop();
+    if (H<int>(a) && H<int>(b))
+        vm.push(op(std::get<int>(a), std::get<int>(b)));
+    else if (H<int>(a) && H<float>(b))
+        vm.push(op((float)std::get<int>(a), std::get<float>(b)));
+    else if (H<float>(a) && H<int>(b))
+        vm.push(op(std::get<float>(a), (float)std::get<int>(b)));
+    else if (H<float>(a) && H<float>(b))
+        vm.push(op(std::get<float>(a), std::get<float>(b)));
+    else
+        throw std::runtime_error("Unacceptable combination of types.");
+}
+
+void VM::push(types::Value v)
 {
     if (stack_idx_ == (STACK_SZ - 1))
         throw std::runtime_error("Stack overflow");
     stack_[stack_idx_++] = v;
 }
 
-Val32 VM::peek() const
+types::Value VM::peek() const
 {
     if (stack_idx_ == 0)
         throw std::runtime_error("Stack underflow");
     return stack_[stack_idx_ - 1];
 }
 
-Val32 VM::pop()
+types::Value VM::pop()
 {
     if (stack_idx_ == 0)
         throw std::runtime_error("Stack underflow");
     return stack_[--stack_idx_];
 }
 
-Val32 VM::nextVal()
+types::Value VM::nextVal()
 {
-    int32_t val = ram_[PC_] | ((int32_t) ram_[PC_+1] << 8) | ((int32_t) ram_[PC_+2] << 8) | ((int32_t) ram_[PC_+3] << 8);
-    PC_ += 4;
-    return val;
+    auto [value, sz] = types::from_bin(&ram_[PC_], 8);
+    PC_ += sz;
+    return value;
 }
