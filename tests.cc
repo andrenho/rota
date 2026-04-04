@@ -1,8 +1,9 @@
 #include <iostream>
 
+#include "assembler/assembler.hh"
 #include "compiler/compiler.hh"
 
 int main()
 {
-    std::cout << compiler::compile("1 + 4 * 3\n");
+    std::cout << assembler::assemble(compiler::compile({ "1 + 4 * 3\n" }));
 }

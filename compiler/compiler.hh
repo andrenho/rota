@@ -2,10 +2,11 @@
 #define FORTUNA_6_COMPILER_HH
 
 #include <string>
+#include <vector>
 
 namespace compiler {
 
-std::string compile(std::string const& source);
+std::string compile(std::vector<std::string> const& source);
 
 }
 

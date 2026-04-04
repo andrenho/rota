@@ -20,7 +20,7 @@
 
 #include "lexer.yy.hh"
 
-void yyerror(yyscan_t scanner, std::stringstream&, const char *s);
+void cperror(yyscan_t scanner, std::stringstream&, const char *s);
 %}
 
 %token <i> NUMBER
@@ -46,6 +46,6 @@ expr:
 
 %%
 
-void yyerror(yyscan_t scanner, std::stringstream&, const char *s) {
+void cperror(yyscan_t scanner, std::stringstream&, const char *s) {
     fprintf(stderr, "error: %s\n", s);
 }

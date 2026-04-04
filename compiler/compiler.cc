@@ -8,15 +8,17 @@
 
 namespace compiler {
 
-std::string compile(std::string const& source)
+std::string compile(std::vector<std::string> const& sources)
 {
     std::stringstream output;
 
-    yyscan_t scanner;
-    cplex_init(&scanner);
-    YY_BUFFER_STATE buf = cp_scan_string(source.c_str(), scanner);
-    cpparse(scanner, output);
-    cp_delete_buffer(buf, scanner);
+    for (auto const& source: sources) {
+        yyscan_t scanner;
+        cplex_init(&scanner);
+        YY_BUFFER_STATE buf = cp_scan_string(source.c_str(), scanner);
+        cpparse(scanner, output);
+        cp_delete_buffer(buf, scanner);
+    }
 
     return output.str();
 }
