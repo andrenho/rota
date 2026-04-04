@@ -3,11 +3,10 @@
 
 #include <cstdint>
 #include <cstddef>
+#include "../common/types.hh"
 
 #define STACK_SZ 512
 #define RAM_SZ (448 * 1024)
-
-using Val32 = int32_t;
 
 struct VMDef {
 };
@@ -21,18 +20,20 @@ public:
 
     [[nodiscard]] uint32_t PC() const { return PC_; }
 
-    [[nodiscard]] Val32    peek() const;
-    [[nodiscard]] uint16_t stack_sz() const { return stack_idx_; };
+    [[nodiscard]] types::Value peek() const;
+    [[nodiscard]] uint16_t     stack_sz() const { return stack_idx_; };
 
 private:
-    Val32 pop();
-    void  push(Val32 v);
-    Val32 nextVal();
+    types::Value pop();
+    void         push(types::Value v);
+    types::Value nextVal();
+
+    template<typename Op> void binary_op(VM& vm, Op op);
 
     VMDef    vm_def_;
 
-    Val32    stack_[STACK_SZ] { 0 };    // stack
-    uint16_t stack_idx_ = 0;
+    types::Value stack_[STACK_SZ] { 0 };    // stack
+    uint16_t     stack_idx_ = 0;
 
     uint8_t  ram_[RAM_SZ] {0 };         // code
     uint32_t PC_ = 0;

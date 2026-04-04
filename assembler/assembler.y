@@ -4,7 +4,7 @@
     typedef void *yyscan_t;
     #include <cstdint>
     #include <vector>
-    #include "../common/value.hh"
+    #include "../common/types.hh"
     #include "../common/opcodes.hh"
 }
 
@@ -14,6 +14,7 @@
 
 %union {
     int i;
+    float f;
 }
 
 %{
@@ -26,7 +27,8 @@
 void aserror(yyscan_t scanner, std::vector<uint8_t>&, const char *s);
 %}
 
-%token <i>   NUMBER
+%token <i>   INTEGER
+%token <f>   FLOAT
 %token       PUSH ADD SUB MUL DIV HALT
 
 %left '+' '-'
@@ -40,13 +42,17 @@ lines: lines line
 
 line: instruction '\n';
 
-instruction: PUSH NUMBER { output.push_back(OP_PUSH); Value::Number($2).add(output); }
-           | ADD         { output.push_back(OP_ADD); }
-           | SUB         { output.push_back(OP_SUB); }
-           | MUL         { output.push_back(OP_MUL); }
-           | DIV         { output.push_back(OP_DIV); }
-           | HALT        { output.push_back(OP_HALT); }
+instruction: PUSH   { output.push_back(OP_PUSH); } value
+           | ADD    { output.push_back(OP_ADD);  }
+           | SUB    { output.push_back(OP_SUB);  }
+           | MUL    { output.push_back(OP_MUL);  }
+           | DIV    { output.push_back(OP_DIV);  }
+           | HALT   { output.push_back(OP_HALT); }
            ;
+
+value: INTEGER { output.append_range(types::to_bin($1)); }
+     | FLOAT   { output.append_range(types::to_bin($1)); }
+     ;
 
 %%
 

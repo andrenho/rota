@@ -6,7 +6,7 @@
 #include "compiler/compiler.hh"
 #include "vm/vm.hh"
 
-void test(std::string const& code, Val32 expected, bool show_intermediate=false)
+void test(std::string const& code, types::Value expected, bool show_intermediate=false)
 {
     printf("-----------------------------\n");
 
@@ -28,14 +28,14 @@ void test(std::string const& code, Val32 expected, bool show_intermediate=false)
         vm.set_ram(bytes.data(), bytes.size());
         vm.run_until_halt();
         if (show_intermediate)
-            printf("A = %d\n", vm.peek());
+            printf("A = %s\n", std::to_string(vm.peek()).c_str());
 
         if (vm.peek() != expected) {
-            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %d, found %d", expected, vm.peek());
+            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", std::to_string(expected).c_str(), std::to_string(vm.peek()).c_str());
             throw std::runtime_error(buf);
         }
 
-        printf("  --> \e[0;32mok (%d)\e[0m\n", vm.peek());
+        printf("  --> \e[0;32mok (%s)\e[0m\n", std::to_string(vm.peek()).c_str());
 
     } catch (std::exception& e) {
         printf("  --> \e[0;31m%s\e[0m\n", e.what());
@@ -48,4 +48,10 @@ int main(int argc, char* argv[])
 
     test("1 + 4 * 3\n", 13, s);
     test("(1 + 4) * 3\n", 15, s);
+    test("1 + 1000\n", 1001, s);
+    test("3 - 1\n", 2, s);
+    test("65 / 5\n", 13, s);
+    test("1.2\n", 1.2f, s);
+    test("1.2 + 4\n", 5.2f, s);
+    test("1 + 1000.5\n", 1001.5f, s);
 }
