@@ -47,5 +47,5 @@ expr:
 %%
 
 void cperror(yyscan_t scanner, std::stringstream&, const char *s) {
-    fprintf(stderr, "error: %s\n", s);
+    throw std::runtime_error(std::string("error: ") + s);
 }

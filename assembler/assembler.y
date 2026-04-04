@@ -51,5 +51,5 @@ instruction: PUSH NUMBER { output.push_back(OP_PUSH); Value::Number($2).add(outp
 %%
 
 void aserror(yyscan_t scanner, std::vector<uint8_t>&, const char *s) {
-    fprintf(stderr, "error: %s\n", s);
+    throw std::runtime_error(std::string("error: ") + s);
 }
