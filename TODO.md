@@ -55,20 +55,21 @@ Things included in the VM:
 
 # Phase 1 - interpreter
 
-- [ ] Base VM (C++)
-  - [ ] Multiple memories
-  - [ ] Interface similar to Lua C API
-- [ ] Base compiler as interpreter
-  - [ ] Test code
-- [ ] Int: expressions
+- [x] Base VM (C++)
+  - [x] Interface similar to Lua C API
+- [x] Base compiler as interpreter
+  - [x] Test code
+- [x] Int: expressions
 - [ ] Float: expressions
 - [ ] Byte: expressions
 - [ ] Local variables
+  - [ ] Multiple memories
 - [ ] Control flow
 - [ ] Functions
 - [ ] Strings
   - [ ] Fixed strings
 - [ ] Tables + GC
+- [ ] Globals
 - [ ] Error handling
 - [ ] Closures
 
