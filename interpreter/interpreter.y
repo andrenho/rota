@@ -11,6 +11,7 @@
 
 %union {
     int i;
+    float f;
 }
 
 %{
@@ -23,7 +24,8 @@
 void inerror(yyscan_t scanner, rotavm::RotaVM&, const char *s);
 %}
 
-%token <i> VALUE
+%token <i> INTEGER
+%token <f> FLOAT
 %left '+' '-'
 %left '*' '/'
 
@@ -41,7 +43,7 @@ expr:
     | expr '*' expr     { vm.multiply(); }
     | expr '/' expr     { vm.divide(); }
     | '(' expr ')'      { $$ = $2; }
-    | VALUE             { vm.push((int) $1); }
+    | INTEGER             { vm.push((int) $1); }
     ;
 
 %%

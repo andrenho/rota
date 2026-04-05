@@ -69,14 +69,12 @@ void RotaVM::binary_op(Op op) {
 
     if (H<int>(a) && H<int>(b))
         push(op(std::get<int>(b), std::get<int>(a)));
-    /*
     else if (H<int>(a) && H<float>(b))
-        vm.push(op((float)std::get<int>(a), std::get<float>(b)));
+        push(op((float)std::get<int>(a), std::get<float>(b)));
     else if (H<float>(a) && H<int>(b))
-        vm.push(op(std::get<float>(a), (float)std::get<int>(b)));
+        push(op(std::get<float>(a), (float)std::get<int>(b)));
     else if (H<float>(a) && H<float>(b))
-        vm.push(op(std::get<float>(a), std::get<float>(b)));
-        */
+        push(op(std::get<float>(a), std::get<float>(b)));
     else
         throw RotaException("Unacceptable combination of types.");
 }
@@ -87,6 +85,7 @@ template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 std::string std::to_string(rotavm::Value const& v)
 {
     return std::visit(overloaded {
-        [](int i) { return std::to_string(i); }
+        [](int i) { return std::to_string(i); },
+        [](float f) { return std::to_string(f); },
     }, v);
 }

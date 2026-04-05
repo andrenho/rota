@@ -12,7 +12,7 @@
 
 namespace rotavm {
 
-using Value = std::variant<int>;
+using Value = std::variant<int, float>;
 
 class RotaVM {
 public:
