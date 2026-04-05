@@ -1,20 +1,76 @@
-# Phase 1 - language implementation
+# Design
 
-- [x] Simple arithmetic - infra
-  - [x] Lexer
-  - [x] Parser
-  - [x] Assembler
-  - [x] VM
-  - [ ] Create tests
-- [ ] Multiple types 
-- [ ] Variable assignment
-- [ ] Comparison expressions
+## Language (Rota)
+
+- Minimal
+- Supported types: int (signed), float, byte (unsigned), string, table, array, function
+- Internals inspired by Lua
+- Syntax inspired by Go
+- Eventually a superlanguage will be created 
+
+## VM
+
+Stack based.
+
+VM memory organization:
+  - Code
+  - Stack
+  - Heap (general objects) - GC support
+  - Strings (all strings in code)
+
+- Interpreter: run code directly, mostly used for testing the compiler
+- Compiler -> assembler -> bytecode: normal cycle
+
+Things included in the VM:
+
+- The VM itself
+- Support for slow/complex activities, via opcodes:
+  - String manipulation
+  - Math operations
+  - FAT
+  - Hardware operations (serial, video, keyboard, sdcard, wi-fi interfaces)
+- Simple DOS-like OS
+  - Include a simple text editor (?)
+- Compiler
+- Debugger
+
+## Hardware
+
+- Version A - connects to a PC
+  - Pico Pi 2 W
+    - 1 core running VM
+  - SDCard
+  - Serial interface (power via serial port)
+- Version B - desktop
+  - Same as version A, plus
+    - VGA interface
+    - USB interface (for keyboard, maybe mouse)
+    - Power management
+    - RTC (maybe)
+- Version C - laptop (maybe)
+  - Same as version A, plus
+    - Screen
+    - Mini-keyboard
+    - Battery
+
+# Phase 1 - interpreter
+
+- [ ] Base VM (C++)
+  - [ ] Multiple memories
+  - [ ] Interface similar to Lua C API
+- [ ] Base compiler as interpreter
+  - [ ] Test code
+- [ ] Int: expressions
+- [ ] Float: expressions
+- [ ] Byte: expressions
+- [ ] Local variables
 - [ ] Control flow
 - [ ] Functions
 - [ ] Strings
-- [ ] Arrays / tables / GC
-- [ ] Closures
+  - [ ] Fixed strings
+- [ ] Tables + GC
 - [ ] Error handling
+- [ ] Closures
 
 # Phase 2 - serial prototype
 
