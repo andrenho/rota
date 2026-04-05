@@ -26,7 +26,9 @@ ADD_FLEX_BISON_DEPENDENCY(interpreter_lexer interpreter_parser)
 set(VM_SRC
         vm/rotavm.cc
         vm/rotavm.hh
-        vm/exceptions.hh)
+        vm/exceptions.hh
+        vm/value.hh
+        vm/value.cc)
 
 set(INTERPRETER_SRC
         ${BISON_interpreter_parser_OUTPUTS} ${FLEX_interpreter_lexer_OUTPUTS}
