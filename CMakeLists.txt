@@ -1,52 +1,42 @@
-cmake_minimum_required(VERSION 3.31)
-project(fortuna_6 C CXX)
+cmake_minimum_required(VERSION 3.6)
 
+project(rota C CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/assembler)
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/compiler)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/interpreter)
 
-BISON_TARGET(assembler_parser
-        assembler/assembler.y
-        ${CMAKE_CURRENT_BINARY_DIR}/assembler/parser.tab.cc
-        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/assembler/parser.tab.hh
+BISON_TARGET(interpreter_parser
+        interpreter/interpreter.y
+        ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.tab.cc
+        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.tab.hh
 )
 
-BISON_TARGET(compiler_parser
-        compiler/compiler.y
-        ${CMAKE_CURRENT_BINARY_DIR}/compiler/parser.tab.cc
-        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/compiler/parser.tab.hh
+FLEX_TARGET(interpreter_lexer
+        interpreter/interpreter.l
+        ${CMAKE_CURRENT_BINARY_DIR}/interpreter/lexer.yy.cc
+        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/interpreter/lexer.yy.hh
 )
 
-FLEX_TARGET(assembler_lexer
-        assembler/assembler.l
-        ${CMAKE_CURRENT_BINARY_DIR}/assembler/lexer.yy.cc
-        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/assembler/lexer.yy.hh
+ADD_FLEX_BISON_DEPENDENCY(interpreter_lexer interpreter_parser)
+
+set(VM_SRC
+        vm/rotavm.cc
+        vm/rotavm.hh
+        vm/exceptions.hh)
+
+set(INTERPRETER_SRC
+        ${BISON_interpreter_parser_OUTPUTS} ${FLEX_interpreter_lexer_OUTPUTS}
+        interpreter/interpreter.cc
+        interpreter/interpreter.hh)
+
+add_executable(rota-vm-test
+        vm/tests.cc
+        ${VM_SRC}
+        ${INTERPRETER_SRC}
 )
 
-FLEX_TARGET(compiler_lexer
-        compiler/compiler.l
-        ${CMAKE_CURRENT_BINARY_DIR}/compiler/lexer.yy.cc
-        DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/compiler/lexer.yy.hh
-)
-
-ADD_FLEX_BISON_DEPENDENCY(assembler_lexer assembler_parser)
-ADD_FLEX_BISON_DEPENDENCY(compiler_lexer compiler_parser)
-
-set(CMAKE_C_STANDARD 11)
-
-add_executable(fortuna_6_tests
-        tests.cc
-        assembler/assembler.hh assembler/assembler.cc
-        compiler/compiler.hh compiler/compiler.cc
-        vm/vm.hh vm/vm.cc
-        ${BISON_assembler_parser_OUTPUTS} ${FLEX_assembler_lexer_OUTPUTS}
-        ${BISON_compiler_parser_OUTPUTS} ${FLEX_compiler_lexer_OUTPUTS}
-        common/types.cc
-        common/types.hh)
-
-target_include_directories(fortuna_6_tests PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(rota-vm-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
