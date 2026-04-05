@@ -62,9 +62,9 @@ Things included in the VM:
 - [x] Int: expressions
 - [x] Float: expressions
   - [x] Modulo
-  - [ ] Power
-  - [ ] Integer division
-  - [ ] Equality operators
+  - [x] Power
+  - [x] Integer division
+- [ ] Equality operators
 - [ ] Byte: expressions
 - [ ] Local variables
   - [ ] Multiple memories
