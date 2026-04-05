@@ -60,7 +60,11 @@ Things included in the VM:
 - [x] Base compiler as interpreter
   - [x] Test code
 - [x] Int: expressions
-- [ ] Float: expressions
+- [x] Float: expressions
+  - [x] Modulo
+  - [ ] Power
+  - [ ] Integer division
+  - [ ] Equality operators
 - [ ] Byte: expressions
 - [ ] Local variables
   - [ ] Multiple memories

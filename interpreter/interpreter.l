@@ -11,10 +11,11 @@
 
 %%
 
-[0-9]*\.[0-9]+f { yylval->f = std::stof(yytext); return FLOAT; }
-[0-9]+          { yylval->i = atoi(yytext); return INTEGER; }
-[ \t]           { /* skip whitespace */ }
-\n              { return '\n'; }
-.               { return yytext[0]; }
+-?[0-9]*\.[0-9]+f   { yylval->f = std::stof(yytext); return FLOAT; }
+-?[0-9]+            { yylval->i = atoi(yytext); return INTEGER; }
+\/\/                { return DSLASH; }
+[ \t]               { /* skip whitespace */ }
+\n                  { return '\n'; }
+.                   { return yytext[0]; }
 
 %%

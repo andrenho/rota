@@ -24,12 +24,12 @@
 void inerror(yyscan_t scanner, rotavm::RotaVM&, const char *s);
 %}
 
+%token DSLASH
 %token <i> INTEGER
 %token <f> FLOAT
 %left '+' '-'
-%left '*' '/'
-
-%type <i> expr
+%left '*' '/' '^' DSLASH
+%left '%'
 
 %%
 
@@ -42,8 +42,12 @@ expr:
     | expr '-' expr     { vm.subtract(); }
     | expr '*' expr     { vm.multiply(); }
     | expr '/' expr     { vm.divide(); }
-    | '(' expr ')'      { $$ = $2; }
-    | INTEGER             { vm.push((int) $1); }
+    | expr '%' expr     { vm.modulo(); }
+    | expr '^' expr     { vm.power(); }
+    | expr DSLASH expr  { vm.idivide(); }
+    | '(' expr ')'
+    | INTEGER           { vm.push((int) $1); }
+    | FLOAT             { vm.push((float) $1); }
     ;
 
 %%

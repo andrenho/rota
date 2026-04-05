@@ -8,11 +8,11 @@
 #include <string>
 #include <variant>
 
+#include "value.hh"
+
 #define STACK_SZ 512
 
 namespace rotavm {
-
-using Value = std::variant<int, float>;
 
 class RotaVM {
 public:
@@ -27,6 +27,9 @@ public:
     void subtract();    // -2, +1
     void multiply();    // -2, +1
     void divide();      // -2, +1
+    void idivide();     // -2, +1
+    void modulo();      // -2, +1
+    void power();       // -2, +1
 
     [[nodiscard]] std::string debug_stack() const;
 
@@ -34,7 +37,8 @@ private:
     std::array<Value, STACK_SZ> stack_ {};
     size_t                      stack_idx_ = 0;
 
-    template<typename Op> void binary_op(Op op);
+    template<typename Op> constexpr void binary_op(Op op);
+    template<typename IntOp, typename FloatOp> constexpr void binary_op(IntOp int_op, FloatOp float_op);
 };
 
 }

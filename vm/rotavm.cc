@@ -1,7 +1,9 @@
+#include <cmath>
+
+#include <functional>
+
 #include "rotavm.hh"
 #include "exceptions.hh"
-
-#define H std::holds_alternative
 
 namespace rotavm {
 
@@ -59,11 +61,38 @@ void RotaVM::multiply()
 
 void RotaVM::divide()
 {
-    binary_op(std::divides {});
+    Value a = pop();
+    Value b = pop();
+
+    float ax = to_float(a);
+    float bx = to_float(b);
+
+    push(bx / ax);
+}
+
+void RotaVM::idivide()
+{
+    Value a = pop();
+    Value b = pop();
+
+    int ax = to_int(a);
+    int bx = to_int(b);
+
+    push(bx / ax);
+}
+
+void RotaVM::modulo()
+{
+    binary_op(std::modulus {}, fmodf);
+}
+
+void RotaVM::power()
+{
+    binary_op(powl, powf);
 }
 
 template<typename Op>
-void RotaVM::binary_op(Op op) {
+constexpr void RotaVM::binary_op(Op op) {
     Value a = pop();
     Value b = pop();
 
@@ -76,7 +105,25 @@ void RotaVM::binary_op(Op op) {
     else if (H<float>(a) && H<float>(b))
         push(op(std::get<float>(a), std::get<float>(b)));
     else
-        throw RotaException("Unacceptable combination of types.");
+        throw RotaException("Type error");
+}
+
+template<typename IntOp, typename FloatOp>
+constexpr void RotaVM::binary_op(IntOp int_op, FloatOp float_op)
+{
+    Value a = pop();
+    Value b = pop();
+
+    if (H<int>(a) && H<int>(b))
+        push((int) int_op(std::get<int>(b), std::get<int>(a)));
+    else if (H<int>(a) && H<float>(b))
+        push(float_op((float)std::get<int>(a), std::get<float>(b)));
+    else if (H<float>(a) && H<int>(b))
+        push(float_op(std::get<float>(a), (float)std::get<int>(b)));
+    else if (H<float>(a) && H<float>(b))
+        push(float_op(std::get<float>(a), std::get<float>(b)));
+    else
+        throw RotaException("Type error");
 }
 
 }
