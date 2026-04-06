@@ -24,9 +24,10 @@
 void inerror(yyscan_t scanner, rotavm::RotaVM&, const char *s);
 %}
 
-%token DSLASH
+%token DSLASH EQUAL NOT_EQUAL LT GT
 %token <i> INTEGER
 %token <f> FLOAT
+%left EQUAL NOT_EQUAL LT GT '<' '>'
 %left '+' '-'
 %left '*' '/' '^' DSLASH
 %left '%'
@@ -37,14 +38,14 @@ program:
       expr '\n'
     ;
 
-expr:
-      expr '+' expr     { vm.sum(); }
+expr: expr '+' expr     { vm.sum(); }
     | expr '-' expr     { vm.subtract(); }
     | expr '*' expr     { vm.multiply(); }
     | expr '/' expr     { vm.divide(); }
     | expr '%' expr     { vm.modulo(); }
     | expr '^' expr     { vm.power(); }
     | expr DSLASH expr  { vm.idivide(); }
+    | expr EQUAL expr   { vm.idivide(); }
     | '(' expr ')'
     | INTEGER           { vm.push((int) $1); }
     | FLOAT             { vm.push((float) $1); }
