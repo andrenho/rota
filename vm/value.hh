@@ -15,8 +15,19 @@ public:
     explicit Value(float f) :type_(T_FLOAT), f_(f) {}
 
     bool operator==(Value const& other) const;
+    bool operator!=(Value const& other) const;
+    bool operator<(Value const& other) const;
+    bool operator>(Value const& other) const;
+    bool operator<=(Value const& other) const;
+    bool operator>=(Value const& other) const;
 
     Value operator+(Value const& other) const;
+    Value operator-(Value const& other) const;
+    Value operator*(Value const& other) const;
+    Value operator/(Value const& other) const;
+    Value operator%(Value const& other) const;
+    Value operator^(Value const& other) const;
+    Value int_divide(Value const& other) const;
 
     [[nodiscard]] Type  type() const { return type_; }
     [[nodiscard]] int   i() const { return i_; }

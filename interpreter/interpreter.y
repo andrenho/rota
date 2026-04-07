@@ -39,12 +39,12 @@ program:
 
 expr:
       expr '+' expr     { vm.sum(); }
-/*    | expr '-' expr     { vm.subtract(); }
+    | expr '-' expr     { vm.subtract(); }
     | expr '*' expr     { vm.multiply(); }
     | expr '/' expr     { vm.divide(); }
     | expr '%' expr     { vm.modulo(); }
     | expr '^' expr     { vm.power(); }
-    | expr DSLASH expr  { vm.idivide(); } */
+    | expr DSLASH expr  { vm.idivide(); }
     | '(' expr ')'
     | INTEGER           { vm.push(rotavm::Value($1)); }
     | FLOAT             { vm.push(rotavm::Value($1)); }

@@ -22,9 +22,64 @@ bool Value::operator==(Value const& other) const
     return std::get<bool>(op_table.execute(BinaryOp::Equals, *this, other));
 }
 
+bool Value::operator!=(Value const& other) const
+{
+    return !std::get<bool>(op_table.execute(BinaryOp::Equals, *this, other));
+}
+
+bool Value::operator<(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::LessThan, *this, other));
+}
+
+bool Value::operator>(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::GreaterThan, *this, other));
+}
+
+bool Value::operator<=(Value const& other) const
+{
+    return *this < other || *this == other;
+}
+
+bool Value::operator>=(Value const& other) const
+{
+    return *this > other || *this == other;
+}
+
 Value Value::operator+(Value const& other) const
 {
     return std::get<Value>(op_table.execute(BinaryOp::Plus, *this, other));
+}
+
+Value Value::operator-(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Subtract, *this, other));
+}
+
+Value Value::operator/(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Divide, *this, other));
+}
+
+Value Value::operator*(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Multiply, *this, other));
+}
+
+Value Value::int_divide(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::IntDivide, *this, other));
+}
+
+Value Value::operator%(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Modulo, *this, other));
+}
+
+Value Value::operator^(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Power, *this, other));
 }
 
 std::string Value::debug() const
@@ -35,25 +90,4 @@ std::string Value::debug() const
         default: throw std::runtime_error("not implemented");
     }
 }
-
-/*
-int to_int(Value const& v)
-{
-    if (H<int>(v))
-        return std::get<int>(v);
-    else if (H<float>(v))
-        return (int) std::get<float>(v);
-    throw RotaException("Type error");
-}
-
-float to_float(Value const& v)
-{
-    if (H<int>(v))
-        return (float) std::get<int>(v);
-    else if (H<float>(v))
-        return std::get<float>(v);
-    throw RotaException("Type error");
-}
-*/
-
 }
