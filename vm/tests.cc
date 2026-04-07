@@ -12,11 +12,11 @@ static void test(std::string const& code, rotavm::Value const& expected)
         itp.run(code);
 
         if (itp.peek_vm() != expected) {
-            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", std::to_string(expected).c_str(), std::to_string(itp.peek_vm()).c_str());
+            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(), itp.peek_vm().debug().c_str());
             throw std::runtime_error(buf);
         }
 
-        printf("  --> \e[0;32mok (%s)\e[0m\n", std::to_string(itp.peek_vm()).c_str());
+        printf("  --> \e[0;32mok (%s)\e[0m\n", itp.peek_vm().debug().c_str());
 
     } catch (std::exception& e) {
         printf("  --> \e[0;31m%s\e[0m\n", e.what());
@@ -29,7 +29,7 @@ int main()
     // arithmetic
 
     test("500\n", rotavm::Value(500));
-    test("500 + 30\n", rotavm::Value(30));
+    test("500 + 30\n", rotavm::Value(530));
     test("1.2f + 4\n", rotavm::Value(5.2f));
     /*
     test("500 - 30\n", 470);

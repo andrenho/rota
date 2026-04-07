@@ -45,8 +45,4 @@ private:
 
 }
 
-namespace std {
-string to_string(rotavm::Value const& v);
-}
-
 #endif //ROTA_ROTAVM_HH

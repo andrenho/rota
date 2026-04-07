@@ -1,5 +1,8 @@
 #include "optable.hh"
 
+#include <cmath>
+#include <limits>
+
 #include "value.hh"
 #include "exceptions.hh"
 
@@ -14,6 +17,18 @@ OpTable::OpTable()
             }
         }
     }
+
+#define BIN_OP(OP, TYPE_A, TYPE_B) binary_op_[(size_t) BinaryOp::OP][TYPE_A][TYPE_B] = [](Value const& a, Value const& b) -> BinaryOpRet
+    BIN_OP(Equals, T_INT, T_INT)     { return a.i() == b.i(); };
+    BIN_OP(Equals, T_INT, T_FLOAT)   { return std::fabs((float) a.i() - b.f()) < std::numeric_limits<float>::epsilon(); };
+    BIN_OP(Equals, T_FLOAT, T_INT)   { return std::fabs(a.f() - (float) b.i()) < std::numeric_limits<float>::epsilon(); };
+    BIN_OP(Equals, T_FLOAT, T_FLOAT) { return std::fabs(a.f() - b.f()) < std::numeric_limits<float>::epsilon(); };
+
+    BIN_OP(Plus, T_INT, T_INT)     { return Value(a.i() + b.i()); };
+    BIN_OP(Plus, T_INT, T_FLOAT)   { return Value((float) a.i() + b.f()); };
+    BIN_OP(Plus, T_FLOAT, T_INT)   { return Value(a.f() + (float) b.i()); };
+    BIN_OP(Plus, T_FLOAT, T_FLOAT) { return Value(a.f() + b.f()); };
+#undef BIN_OP
 }
 
 BinaryOpRet OpTable::execute(BinaryOp op, Value const& a, Value const& b) const

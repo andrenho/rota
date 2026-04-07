@@ -2,8 +2,8 @@
 #define ROTA_VALUE_HH
 
 #include <cstddef>
+#include <string>
 
-#include <compare>
 #include "type.hh"
 
 namespace rotavm {
@@ -18,7 +18,11 @@ public:
 
     Value operator+(Value const& other) const;
 
-    [[nodiscard]] Type type() const { return type_; }
+    [[nodiscard]] Type  type() const { return type_; }
+    [[nodiscard]] int   i() const { return i_; }
+    [[nodiscard]] float f() const { return f_; }
+
+    std::string debug() const;
 
 private:
     Type type_;

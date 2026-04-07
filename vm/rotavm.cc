@@ -36,7 +36,7 @@ std::string RotaVM::debug_stack() const
 {
     std::string ret;
     for (size_t i = 0; i < stack_idx_; ++i)
-        ret += "[" + std::to_string(stack_[i]) + "] ";
+        ret += "[" + stack_[i].debug() + "] ";
     return ret;
 }
 
@@ -131,16 +131,4 @@ constexpr void RotaVM::binary_op(IntOp int_op, FloatOp float_op)
 }
  */
 
-}
-
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-std::string std::to_string(rotavm::Value const& v)
-{
-    return "";
-    /*
-    return std::visit(overloaded {
-        [](int i) { return std::to_string(i); },
-        [](float f) { return std::to_string(f); },
-    }, v);
-     */
 }

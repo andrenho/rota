@@ -27,6 +27,15 @@ Value Value::operator+(Value const& other) const
     return std::get<Value>(op_table.execute(BinaryOp::Plus, *this, other));
 }
 
+std::string Value::debug() const
+{
+    switch (type_) {
+        case T_INT: return std::to_string(i_);
+        case T_FLOAT: return std::to_string(f_);
+        default: throw std::runtime_error("not implemented");
+    }
+}
+
 /*
 int to_int(Value const& v)
 {
