@@ -43,7 +43,7 @@ public:
     [[nodiscard]] std::string debug() const;
 
     std::vector<uint8_t> to_bytes() const;
-    static Value from_bytes(uint8_t const* data, size_t max_bytes);
+    static std::pair<Value, size_t> from_bytes(uint8_t const* data, size_t max_bytes);
 
 private:
     Type type_;

@@ -2,6 +2,8 @@
 #include "vm/compiler/compiler.hh"
 #include "vm/rotavm.hh"
 
+static bool debug;
+
 template <typename T>
 static void test(std::string const& code, T const& v_expected)
 {
@@ -12,7 +14,13 @@ static void test(std::string const& code, T const& v_expected)
 
     rotavm::RotaVM vm;
     try {
-        vm.set_executable_memory(rotavm::compile(code));
+        vm.set_executable_memory(rotavm::compile(code), true);
+
+        if (debug) {
+            printf("%s\n", vm.debug_executable_memory().c_str());
+            printf("%s\n", vm.debug_executable().c_str());
+        }
+
         vm.run_until_halt();
 
         if (vm.peek() != expected) {
@@ -29,8 +37,10 @@ static void test(std::string const& code, T const& v_expected)
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    debug = (argc == 2 && std::string(argv[1]) == "-d");
+
     // arithmetic
 
     test("500\n", 500);
