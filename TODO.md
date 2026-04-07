@@ -65,8 +65,8 @@ Things included in the VM:
   - [x] Power
   - [x] Integer division
 - [ ] Equality, logical
-  - [ ] Equality
-  - [ ] Logical
+  - [x] Equality
+  - [x] Logical
     - [ ] Not
 - [ ] Local variables
   - [ ] Multiple memories

@@ -92,6 +92,11 @@ bool Value::operator||(Value const& other) const
     return std::get<bool>(op_table.execute(BinaryOp::Or, *this, other));
 }
 
+bool Value::operator!() const
+{
+    return std::get<bool>(op_table.execute(UnaryOp::Not, *this));
+}
+
 std::string Value::debug() const
 {
     switch (type_) {

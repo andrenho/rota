@@ -32,6 +32,8 @@ public:
     [[nodiscard]] bool operator&&(Value const& other) const;
     [[nodiscard]] bool operator||(Value const& other) const;
 
+    [[nodiscard]] bool operator!() const;
+
     [[nodiscard]] Type  type() const { return type_; }
     [[nodiscard]] int   i() const { return i_; }
     [[nodiscard]] float f() const { return f_; }

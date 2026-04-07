@@ -41,6 +41,7 @@ public:
     void less_than_or_equal();     // -2, +1
     void and_();                   // -2, +1
     void or_();                    // -2, +1
+    void not_();                   // -1, +1
 
     [[nodiscard]] std::string debug_stack() const;
 

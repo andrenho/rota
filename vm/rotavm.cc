@@ -45,6 +45,7 @@ std::string RotaVM::debug_stack() const
 //
 
 #define BINARY_OP(method, operation) void RotaVM::method() { Value a = pop(); Value b = pop(); push(operation); }
+#define UNARY_OP(method, operation) void RotaVM::method() { Value a = pop(); push(operation); }
 
 // arithmetic
 
@@ -66,7 +67,9 @@ BINARY_OP(greater_than_or_equal, b >= a)
 BINARY_OP(less_than_or_equal,    b <= a)
 BINARY_OP(and_,                  b && a)
 BINARY_OP(or_,                   b || a)
+UNARY_OP(not_,                   !a)
 
 #undef BINARY_OP
+#undef UNARY_OP
 
 }
