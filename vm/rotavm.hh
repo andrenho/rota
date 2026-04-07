@@ -18,7 +18,7 @@ class RotaVM {
 public:
     // stack manipulation
     void         push(Value&& value);   // +1
-    void         push(bool v) { push(Value((int) v)); }
+    void         push(bool v) { push(Value(v ? -1 : 0)); }
     Value        pop();                 // -1
     [[nodiscard]] Value const& peek() const;
     [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }

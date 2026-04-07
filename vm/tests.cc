@@ -10,8 +10,8 @@ static void test(std::string const& code, T const& v_expected)
 
     printf("%s", code.c_str());
 
+    RotaInterpreter itp;
     try {
-        RotaInterpreter itp;
         itp.run(code);
 
         if (itp.peek_vm() != expected) {
@@ -23,6 +23,7 @@ static void test(std::string const& code, T const& v_expected)
 
     } catch (std::exception& e) {
         printf("  --> \e[0;31m%s\e[0m\n", e.what());
+        printf("      \e[0;31m"); itp.print_stack(); printf("\e[0m");
         exit(1);
     }
 }
@@ -50,4 +51,15 @@ int main()
 
     // logic
     test("false\n", 0);
+    test("true\n", -1);
+    test("1 != 0\n", -1);
+    test("1 == 0\n", 0);
+    test("1 != 1\n", 0);
+    test("1 == 1\n", -1);
+    test("2 >= 1\n", -1);
+    test("1 >= 2\n", 0);
+    test("1 >= 1\n", -1);
+    test("1 > 1\n", 0);
+    test("2 > 1 && 1 > 2\n", 0);
+    test("2 > 1 || 1 > 2\n", -1);
 }
