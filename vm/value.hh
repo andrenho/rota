@@ -14,26 +14,26 @@ public:
     explicit Value(int i) :type_(T_INT), i_(i) {}
     explicit Value(float f) :type_(T_FLOAT), f_(f) {}
 
-    bool operator==(Value const& other) const;
-    bool operator!=(Value const& other) const;
-    bool operator<(Value const& other) const;
-    bool operator>(Value const& other) const;
-    bool operator<=(Value const& other) const;
-    bool operator>=(Value const& other) const;
+    [[nodiscard]] bool operator==(Value const& other) const;
+    [[nodiscard]] bool operator!=(Value const& other) const;
+    [[nodiscard]] bool operator<(Value const& other) const;
+    [[nodiscard]] bool operator>(Value const& other) const;
+    [[nodiscard]] bool operator<=(Value const& other) const;
+    [[nodiscard]] bool operator>=(Value const& other) const;
 
-    Value operator+(Value const& other) const;
-    Value operator-(Value const& other) const;
-    Value operator*(Value const& other) const;
-    Value operator/(Value const& other) const;
-    Value operator%(Value const& other) const;
-    Value operator^(Value const& other) const;
-    Value int_divide(Value const& other) const;
+    [[nodiscard]] Value operator+(Value const& other) const;
+    [[nodiscard]] Value operator-(Value const& other) const;
+    [[nodiscard]] Value operator*(Value const& other) const;
+    [[nodiscard]] Value operator/(Value const& other) const;
+    [[nodiscard]] Value operator%(Value const& other) const;
+    [[nodiscard]] Value operator^(Value const& other) const;
+    [[nodiscard]] Value int_divide(Value const& other) const;
 
     [[nodiscard]] Type  type() const { return type_; }
     [[nodiscard]] int   i() const { return i_; }
     [[nodiscard]] float f() const { return f_; }
 
-    std::string debug() const;
+    [[nodiscard]] std::string debug() const;
 
 private:
     Type type_;
