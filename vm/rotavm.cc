@@ -46,9 +46,13 @@ std::string RotaVM::debug_stack() const
 
 void RotaVM::sum()
 {
-    binary_op(std::plus {});
+    Value a = pop();
+    Value b = pop();
+
+    push(b + a);
 }
 
+/*
 void RotaVM::subtract()
 {
     binary_op(std::minus {});
@@ -125,14 +129,18 @@ constexpr void RotaVM::binary_op(IntOp int_op, FloatOp float_op)
     else
         throw RotaException("Type error");
 }
+ */
 
 }
 
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 std::string std::to_string(rotavm::Value const& v)
 {
+    return "";
+    /*
     return std::visit(overloaded {
         [](int i) { return std::to_string(i); },
         [](float f) { return std::to_string(f); },
     }, v);
+     */
 }

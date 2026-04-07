@@ -1,16 +1,74 @@
 #ifndef ROTA_VALUE_HH
 #define ROTA_VALUE_HH
 
-#include <variant>
+#include <cstddef>
 
-#define H std::holds_alternative
+#include <compare>
+#include "type.hh"
 
 namespace rotavm {
 
-using Value = std::variant<int, float>;
+class Value {
+public:
+    Value() :type_(T_INT), i_(0) {}
+    explicit Value(int i) :type_(T_INT), i_(i) {}
+    explicit Value(float f) :type_(T_FLOAT), f_(f) {}
+
+    bool operator==(Value const& other) const;
+
+    Value operator+(Value const& other) const;
+
+    [[nodiscard]] Type type() const { return type_; }
+
+private:
+    Type type_;
+    union {
+        int i_;
+        float f_;
+    };
+
+    static class OpTable const& op_table;
+};
+
+/*
+class ValueInt;
+class ValueFloat;
+
+class ValueInt {
+public:
+    ValueInt() : value_(0) {}
+    explicit ValueInt(int v) : value_(v) {}
+
+    auto operator<=>(ValueInt const& i) const = default;
+    std::strong_ordering operator<=>(ValueFloat const& f);
+
+    ValueInt operator+(ValueInt const& i) const;
+    ValueFloat operator+(ValueFloat const& f) const;
+
+private:
+    int value_;
+};
+
+class ValueFloat {
+public:
+    ValueFloat() : value_(0.f) {}
+    explicit ValueFloat(float f) : value_(f) {}
+
+    std::strong_ordering operator<=>(ValueInt const& i);
+    auto operator<=>(ValueFloat const& f) const = default;
+
+    ValueFloat operator+(ValueFloat const& f) const;
+    ValueFloat operator+(ValueInt const& i) const;
+
+private:
+    float value_;
+};
+
+using Value = std::variant<ValueInt, ValueFloat>;
 
 int   to_int(Value const& v);
 float to_float(Value const& v);
+ */
 
 }
 

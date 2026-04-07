@@ -24,12 +24,14 @@ public:
 
     // arithmetic
     void sum();         // -2, +1
+    /*
     void subtract();    // -2, +1
     void multiply();    // -2, +1
     void divide();      // -2, +1
     void idivide();     // -2, +1
     void modulo();      // -2, +1
     void power();       // -2, +1
+     */
 
     [[nodiscard]] std::string debug_stack() const;
 
