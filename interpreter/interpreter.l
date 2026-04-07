@@ -11,8 +11,8 @@
 
 %%
 
-true                { return yylval->i = -1; return INTEGER; }
-false               { return yylval->i = 0; return INTEGER; }
+true                { yylval->i = -1; return INTEGER; }
+false               { yylval->i = 0; return INTEGER; }
 -?[0-9]*\.[0-9]+f   { yylval->f = std::stof(yytext); return FLOAT; }
 -?[0-9]+            { yylval->i = atoi(yytext); return INTEGER; }
 \/\/                { return DSLASH; }

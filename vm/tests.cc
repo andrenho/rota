@@ -49,5 +49,5 @@ int main()
     test("5 // 4\n", 1);
 
     // logic
-    test("true\n", -1);
+    test("false\n", 0);
 }
