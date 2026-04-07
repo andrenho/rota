@@ -24,23 +24,18 @@ public:
 
     // arithmetic
     void sum();         // -2, +1
-    /*
     void subtract();    // -2, +1
     void multiply();    // -2, +1
     void divide();      // -2, +1
     void idivide();     // -2, +1
     void modulo();      // -2, +1
     void power();       // -2, +1
-     */
 
     [[nodiscard]] std::string debug_stack() const;
 
 private:
     std::array<Value, STACK_SZ> stack_ {};
     size_t                      stack_idx_ = 0;
-
-    template<typename Op> constexpr void binary_op(Op op);
-    template<typename IntOp, typename FloatOp> constexpr void binary_op(IntOp int_op, FloatOp float_op);
 };
 
 }

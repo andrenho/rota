@@ -11,7 +11,11 @@ namespace rotavm {
 
 class Value;
 
-enum class BinaryOp : size_t { Plus, Equals, COUNT };
+enum class BinaryOp : size_t {
+    Plus, Subtract, Multiply, Divide, IntDivide,
+    Modulo, Power,
+    Equals, LessThan, GreaterThan,
+    COUNT };
 using BinaryOpRet = std::variant<Value, bool>;
 
 class OpTable {
