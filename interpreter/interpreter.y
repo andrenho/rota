@@ -24,11 +24,12 @@
 void inerror(yyscan_t scanner, rotavm::RotaVM&, const char *s);
 %}
 
-%token DSLASH EQ NEQ GT_EQ LT_EQ AND OR XOR
+%token AND OR
+%token DSLASH EQ NEQ GT_EQ LT_EQ
 %token <i> INTEGER
 %token <f> FLOAT
-%left EQ NEQ GT_EQ LT_EQ '<' '>'
 %left AND OR
+%left EQ NEQ GT_EQ LT_EQ '<' '>'
 %left '+' '-'
 %left '*' '/' DSLASH '%'
 %left '^'
