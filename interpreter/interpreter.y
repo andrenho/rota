@@ -1,3 +1,4 @@
+%define parse.trace
 %define api.prefix {in}
 
 %code requires {
@@ -33,7 +34,6 @@ void inerror(yyscan_t scanner, rotavm::RotaVM&, const char *s);
 %left '+' '-'
 %left '*' '/' DSLASH '%'
 %left '^'
-%left '!'
 
 %%
 
@@ -42,7 +42,8 @@ program:
     ;
 
 expr:
-      expr '+' expr     { vm.sum(); }
+      '!' expr          { vm.not_(); }
+    | expr '+' expr     { vm.sum(); }
     | expr '-' expr     { vm.subtract(); }
     | expr '*' expr     { vm.multiply(); }
     | expr '/' expr     { vm.divide(); }
@@ -57,7 +58,6 @@ expr:
     | expr LT_EQ expr   { vm.less_than_or_equal(); }
     | expr AND expr     { vm.and_(); }
     | expr OR expr      { vm.or_(); }
-    | '!' expr          { vm.not_(); }
     | '(' expr ')'
     | INTEGER           { vm.push(rotavm::Value($1)); }
     | FLOAT             { vm.push(rotavm::Value($1)); }

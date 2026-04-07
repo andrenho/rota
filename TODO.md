@@ -64,10 +64,10 @@ Things included in the VM:
   - [x] Modulo
   - [x] Power
   - [x] Integer division
-- [ ] Equality, logical
+- [x] Equality, logical
   - [x] Equality
   - [x] Logical
-    - [ ] Not
+    - [x] Not
 - [ ] Local variables
   - [ ] Multiple memories
 - [ ] Control flow

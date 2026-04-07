@@ -22,6 +22,7 @@ false               { yylval->i = 0; return INTEGER; }
 \<=                 { return LT_EQ; }
 &&                  { return AND; }
 \|\|                { return OR; }
+!                   { return '!'; }
 [ \t]               { /* skip whitespace */ }
 \n                  { return '\n'; }
 .                   { return yytext[0]; }
