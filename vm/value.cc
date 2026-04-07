@@ -1,24 +1,93 @@
 #include "value.hh"
+
+#include <functional>
+
 #include "exceptions.hh"
+#include "optable.hh"
+#include "type.hh"
+
+constexpr const char* TYPE_ERROR = "Type error";
 
 namespace rotavm {
 
-int to_int(Value const& v)
+static OpTable op_tabl;
+OpTable const& Value::op_table = op_tabl;
+
+//
+// BINARY FUNCTIONS
+//
+
+bool Value::operator==(Value const& other) const
 {
-    if (H<int>(v))
-        return std::get<int>(v);
-    else if (H<float>(v))
-        return (int) std::get<float>(v);
-    throw RotaException("Type error");
+    return std::get<bool>(op_table.execute(BinaryOp::Equals, *this, other));
 }
 
-float to_float(Value const& v)
+bool Value::operator!=(Value const& other) const
 {
-    if (H<int>(v))
-        return (float) std::get<int>(v);
-    else if (H<float>(v))
-        return std::get<float>(v);
-    throw RotaException("Type error");
+    return !std::get<bool>(op_table.execute(BinaryOp::Equals, *this, other));
 }
 
+bool Value::operator<(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::LessThan, *this, other));
+}
+
+bool Value::operator>(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::GreaterThan, *this, other));
+}
+
+bool Value::operator<=(Value const& other) const
+{
+    return *this < other || *this == other;
+}
+
+bool Value::operator>=(Value const& other) const
+{
+    return *this > other || *this == other;
+}
+
+Value Value::operator+(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Plus, *this, other));
+}
+
+Value Value::operator-(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Subtract, *this, other));
+}
+
+Value Value::operator/(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Divide, *this, other));
+}
+
+Value Value::operator*(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Multiply, *this, other));
+}
+
+Value Value::int_divide(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::IntDivide, *this, other));
+}
+
+Value Value::operator%(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Modulo, *this, other));
+}
+
+Value Value::operator^(Value const& other) const
+{
+    return std::get<Value>(op_table.execute(BinaryOp::Power, *this, other));
+}
+
+std::string Value::debug() const
+{
+    switch (type_) {
+        case T_INT: return std::to_string(i_);
+        case T_FLOAT: return std::to_string(f_);
+        default: throw std::runtime_error("not implemented");
+    }
+}
 }

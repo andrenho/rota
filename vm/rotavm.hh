@@ -36,15 +36,8 @@ public:
 private:
     std::array<Value, STACK_SZ> stack_ {};
     size_t                      stack_idx_ = 0;
-
-    template<typename Op> constexpr void binary_op(Op op);
-    template<typename IntOp, typename FloatOp> constexpr void binary_op(IntOp int_op, FloatOp float_op);
 };
 
-}
-
-namespace std {
-string to_string(rotavm::Value const& v);
 }
 
 #endif //ROTA_ROTAVM_HH

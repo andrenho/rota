@@ -6,7 +6,7 @@
 
     enum ValueType { T_INT, T_FLOAT };
     struct Value {
-        ValueType type;
+        ValueType type_;
         union {
             int i;
             float f;
@@ -36,7 +36,7 @@ void cperror(yyscan_t scanner, std::stringstream&, const char *s);
 %left '+' '-'
 %left '*' '/'
 
-%type <val> expr
+%type_ <val> expr
 
 %%
 
@@ -51,7 +51,7 @@ expr:
     | expr '/' expr  { output << "\tdiv\n"; }
     | '(' expr ')'   { $$ = $2; }
     | VALUE          {
-                        switch ($1.type) {
+                        switch ($1.type_) {
                             case T_INT: output << "\tpush " << $1.i << "\n"; break;
                             case T_FLOAT: output << "\tpush " << $1.f << "f\n"; break;
                         }

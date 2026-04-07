@@ -11,6 +11,11 @@ public:
     explicit RotaException(std::string const& description) : std::runtime_error(description) {}
 };
 
+class RotaTypeError : public RotaException {
+public:
+    RotaTypeError() : RotaException("Type error") {}
+};
+
 }
 
 #endif //ROTA_EXCEPTIONS_HH

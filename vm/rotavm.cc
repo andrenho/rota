@@ -36,7 +36,7 @@ std::string RotaVM::debug_stack() const
 {
     std::string ret;
     for (size_t i = 0; i < stack_idx_; ++i)
-        ret += "[" + std::to_string(stack_[i]) + "] ";
+        ret += "[" + stack_[i].debug() + "] ";
     return ret;
 }
 
@@ -46,17 +46,26 @@ std::string RotaVM::debug_stack() const
 
 void RotaVM::sum()
 {
-    binary_op(std::plus {});
+    Value a = pop();
+    Value b = pop();
+
+    push(b + a);
 }
 
 void RotaVM::subtract()
 {
-    binary_op(std::minus {});
+    Value a = pop();
+    Value b = pop();
+
+    push(b - a);
 }
 
 void RotaVM::multiply()
 {
-    binary_op(std::multiplies {});
+    Value a = pop();
+    Value b = pop();
+
+    push(b * a);
 }
 
 void RotaVM::divide()
@@ -64,10 +73,7 @@ void RotaVM::divide()
     Value a = pop();
     Value b = pop();
 
-    float ax = to_float(a);
-    float bx = to_float(b);
-
-    push(bx / ax);
+    push(b / a);
 }
 
 void RotaVM::idivide()
@@ -75,64 +81,23 @@ void RotaVM::idivide()
     Value a = pop();
     Value b = pop();
 
-    int ax = to_int(a);
-    int bx = to_int(b);
-
-    push(bx / ax);
+    push(b.int_divide(a));
 }
 
 void RotaVM::modulo()
 {
-    binary_op(std::modulus {}, fmodf);
+    Value a = pop();
+    Value b = pop();
+
+    push(b % a);
 }
 
 void RotaVM::power()
 {
-    binary_op(powl, powf);
-}
-
-template<typename Op>
-constexpr void RotaVM::binary_op(Op op) {
     Value a = pop();
     Value b = pop();
 
-    if (H<int>(a) && H<int>(b))
-        push(op(std::get<int>(b), std::get<int>(a)));
-    else if (H<int>(a) && H<float>(b))
-        push(op((float)std::get<int>(a), std::get<float>(b)));
-    else if (H<float>(a) && H<int>(b))
-        push(op(std::get<float>(a), (float)std::get<int>(b)));
-    else if (H<float>(a) && H<float>(b))
-        push(op(std::get<float>(a), std::get<float>(b)));
-    else
-        throw RotaException("Type error");
+    push(b ^ a);
 }
 
-template<typename IntOp, typename FloatOp>
-constexpr void RotaVM::binary_op(IntOp int_op, FloatOp float_op)
-{
-    Value a = pop();
-    Value b = pop();
-
-    if (H<int>(a) && H<int>(b))
-        push((int) int_op(std::get<int>(b), std::get<int>(a)));
-    else if (H<int>(a) && H<float>(b))
-        push(float_op((float)std::get<int>(a), std::get<float>(b)));
-    else if (H<float>(a) && H<int>(b))
-        push(float_op(std::get<float>(a), (float)std::get<int>(b)));
-    else if (H<float>(a) && H<float>(b))
-        push(float_op(std::get<float>(a), std::get<float>(b)));
-    else
-        throw RotaException("Type error");
-}
-
-}
-
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-std::string std::to_string(rotavm::Value const& v)
-{
-    return std::visit(overloaded {
-        [](int i) { return std::to_string(i); },
-        [](float f) { return std::to_string(f); },
-    }, v);
 }

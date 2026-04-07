@@ -46,8 +46,8 @@ expr:
     | expr '^' expr     { vm.power(); }
     | expr DSLASH expr  { vm.idivide(); }
     | '(' expr ')'
-    | INTEGER           { vm.push((int) $1); }
-    | FLOAT             { vm.push((float) $1); }
+    | INTEGER           { vm.push(rotavm::Value($1)); }
+    | FLOAT             { vm.push(rotavm::Value($1)); }
     ;
 
 %%

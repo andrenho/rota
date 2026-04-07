@@ -59,8 +59,8 @@ Things included in the VM:
   - [x] Interface similar to Lua C API
 - [x] Base compiler as interpreter
   - [x] Test code
-- [x] Int: expressions
-- [x] Float: expressions
+- [x] T_INT: expressions
+- [x] T_COUNT: expressions
   - [x] Modulo
   - [x] Power
   - [x] Integer division
