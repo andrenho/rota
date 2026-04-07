@@ -41,63 +41,35 @@ std::string RotaVM::debug_stack() const
 }
 
 //
-// ARITHMETIC
+// OPERATORS
 //
 
-void RotaVM::sum()
-{
-    Value a = pop();
-    Value b = pop();
+#define BINARY_OP(method, operation) void RotaVM::method() { Value a = pop(); Value b = pop(); push(operation); }
+#define UNARY_OP(method, operation) void RotaVM::method() { Value a = pop(); push(operation); }
 
-    push(b + a);
-}
+// arithmetic
 
-void RotaVM::subtract()
-{
-    Value a = pop();
-    Value b = pop();
+BINARY_OP(sum,      b + a)
+BINARY_OP(subtract, b - a)
+BINARY_OP(multiply, b * a)
+BINARY_OP(divide,   b / a)
+BINARY_OP(idivide,  b.int_divide(a))
+BINARY_OP(modulo,   b % a)
+BINARY_OP(power,    b ^ a);
 
-    push(b - a);
-}
+// logic
 
-void RotaVM::multiply()
-{
-    Value a = pop();
-    Value b = pop();
+BINARY_OP(equals,                b == a)
+BINARY_OP(not_equal,             b != a)
+BINARY_OP(greater_than,          b > a)
+BINARY_OP(less_than,             b < a)
+BINARY_OP(greater_than_or_equal, b >= a)
+BINARY_OP(less_than_or_equal,    b <= a)
+BINARY_OP(and_,                  b && a)
+BINARY_OP(or_,                   b || a)
+UNARY_OP(not_,                   !a)
 
-    push(b * a);
-}
-
-void RotaVM::divide()
-{
-    Value a = pop();
-    Value b = pop();
-
-    push(b / a);
-}
-
-void RotaVM::idivide()
-{
-    Value a = pop();
-    Value b = pop();
-
-    push(b.int_divide(a));
-}
-
-void RotaVM::modulo()
-{
-    Value a = pop();
-    Value b = pop();
-
-    push(b % a);
-}
-
-void RotaVM::power()
-{
-    Value a = pop();
-    Value b = pop();
-
-    push(b ^ a);
-}
+#undef BINARY_OP
+#undef UNARY_OP
 
 }

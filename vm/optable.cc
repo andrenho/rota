@@ -13,12 +13,18 @@ OpTable::OpTable()
     for (size_t i = 0; i < (size_t) BinaryOp::COUNT; ++i) {
         for (size_t j = 0; j < (size_t) T_COUNT; ++j) {
             for (size_t k = 0; k < (size_t) T_COUNT; ++k) {
-                binary_op_[i][j][k] = [](Value const&, Value const&) -> BinaryOpRet { throw RotaTypeError(); };
+                binary_op_[i][j][k] = [](Value const&, Value const&) -> OpRet { throw RotaTypeError(); };
             }
         }
     }
 
-#define BIN_OP(OP, TYPE_A, TYPE_B) binary_op_[(size_t) BinaryOp::OP][TYPE_A][TYPE_B] = [](Value const& a, Value const& b) -> BinaryOpRet
+    for (size_t i = 0; i < (size_t) UnaryOp::COUNT; ++i) {
+        for (size_t j = 0; j < (size_t) T_COUNT; ++j) {
+            unary_op_[i][j] = [](Value const&) -> OpRet { throw RotaTypeError(); };
+        }
+    }
+
+#define BIN_OP(OP, TYPE_A, TYPE_B) binary_op_[(size_t) BinaryOp::OP][TYPE_A][TYPE_B] = [](Value const& a, Value const& b) -> OpRet
     BIN_OP(Plus, T_INT, T_INT)     { return Value(a.i() + b.i()); };
     BIN_OP(Plus, T_INT, T_FLOAT)   { return Value((float) a.i() + b.f()); };
     BIN_OP(Plus, T_FLOAT, T_INT)   { return Value(a.f() + (float) b.i()); };
@@ -74,12 +80,24 @@ OpTable::OpTable()
     BIN_OP(GreaterThan, T_FLOAT, T_INT)   { return a.f() > (float) b.i(); };
     BIN_OP(GreaterThan, T_FLOAT, T_FLOAT) { return a.f() > b.f(); };
 
+    BIN_OP(And, T_INT, T_INT)     { return (bool) (a.i() && b.i()); };
+    BIN_OP(Or,  T_INT, T_INT)     { return (bool) (a.i() || b.i()); };
 #undef BIN_OP
+
+#define UNARY_OP(OP, TYPE) unary_op_[(size_t) UnaryOp::OP][TYPE] = [](Value const& a) -> OpRet
+    UNARY_OP(Not, T_INT)    { return !a.i(); };
+    UNARY_OP(Not, T_FLOAT)  { return !((int) a.f()); };
+#undef UNARY_OP
 }
 
-BinaryOpRet OpTable::execute(BinaryOp op, Value const& a, Value const& b) const
+OpRet OpTable::execute(BinaryOp op, Value const& a, Value const& b) const
 {
     return binary_op_[(size_t) op][a.type()][b.type()](a, b);
+}
+
+OpRet OpTable::execute(UnaryOp op, Value const& a) const
+{
+    return unary_op_[(size_t) op][a.type()](a);
 }
 
 }
