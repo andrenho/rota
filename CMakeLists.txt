@@ -30,13 +30,16 @@ set(VM_SRC
         vm/value.hh
         vm/value.cc
         vm/optable.cc
-        vm/optable.hh)
+        vm/optable.hh
+        compiler/compiler.cc
+        compiler/compiler.hh)
 
 set(INTERPRETER_SRC
         ${BISON_interpreter_parser_OUTPUTS} ${FLEX_interpreter_lexer_OUTPUTS}
         interpreter/interpreter.cc
         interpreter/interpreter.hh
-        vm/type.hh)
+        vm/type.hh
+        vm/opcode.hh)
 
 add_executable(rota-vm-test
         vm/tests.cc

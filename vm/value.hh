@@ -2,7 +2,9 @@
 #define ROTA_VALUE_HH
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #include "type.hh"
 
@@ -39,6 +41,9 @@ public:
     [[nodiscard]] float f() const { return f_; }
 
     [[nodiscard]] std::string debug() const;
+
+    std::vector<uint8_t> to_bytes() const;
+    static Value from_bytes(uint8_t const* data, size_t max_bytes);
 
 private:
     Type type_;
