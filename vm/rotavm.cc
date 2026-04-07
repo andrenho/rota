@@ -4,8 +4,68 @@
 
 #include "rotavm.hh"
 #include "exceptions.hh"
+#include "opcode.hh"
 
 namespace rotavm {
+
+//
+// EXECUTABLE
+//
+
+void RotaVM::run_until_halt()
+{
+    for (;;) {
+        if (executable_.at(PC_) == (uint8_t) OpCode::Halt)
+            return;
+        step();
+    }
+}
+
+inline void RotaVM::step()
+{
+    switch ((OpCode) executable_.at(PC_)) {
+        case OpCode::Nop:
+            break;
+        case OpCode::Push:
+            break;
+        case OpCode::Pop:
+            break;
+        case OpCode::Sum:
+            break;
+        case OpCode::Subtract:
+            break;
+        case OpCode::Multiply:
+            break;
+        case OpCode::Divide:
+            break;
+        case OpCode::IntDivide:
+            break;
+        case OpCode::Modulo:
+            break;
+        case OpCode::Power:
+            break;
+        case OpCode::Equals:
+            break;
+        case OpCode::NotEqual:
+            break;
+        case OpCode::GreaterThan:
+            break;
+        case OpCode::LessThan:
+            break;
+        case OpCode::GreaterThanOrEqual:
+            break;
+        case OpCode::LessThanOrEqual:
+            break;
+        case OpCode::And:
+            break;
+        case OpCode::Or:
+            break;
+        case OpCode::Not:
+            break;
+        case OpCode::Halt:
+            break;
+    }
+}
 
 //
 // STACK MANIPULATION

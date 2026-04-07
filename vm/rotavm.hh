@@ -16,12 +16,27 @@ namespace rotavm {
 
 class RotaVM {
 public:
+    // execution
+    void set_executable_memory(std::vector<uint8_t> const& data) { executable_ = data; }
+    void run_until_halt();
+
+    // debug
+    [[nodiscard]] Value const& peek() const;
+    [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }
+    [[nodiscard]] std::string  debug_stack() const;
+
+private:
+    std::array<Value, STACK_SZ> stack_ {};
+    size_t                      stack_idx_ = 0;
+    std::vector<uint8_t>        executable_;
+    uint32_t                    PC_ = 0;
+
+    void step();
+
     // stack manipulation
     void         push(Value&& value);   // +1
     void         push(bool v) { push(Value(v ? -1 : 0)); }
     Value        pop();                 // -1
-    [[nodiscard]] Value const& peek() const;
-    [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }
 
     // arithmetic
     void sum();         // -2, +1
@@ -42,12 +57,6 @@ public:
     void and_();                   // -2, +1
     void or_();                    // -2, +1
     void not_();                   // -1, +1
-
-    [[nodiscard]] std::string debug_stack() const;
-
-private:
-    std::array<Value, STACK_SZ> stack_ {};
-    size_t                      stack_idx_ = 0;
 };
 
 }

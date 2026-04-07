@@ -8,6 +8,8 @@
 
 namespace rotavm {
 
+std::vector<uint8_t> compile(std::string const& code);
+
 class CompilationOutput {
 public:
     CompilationOutput& operator<<(rotavm::OpCode opcode);
