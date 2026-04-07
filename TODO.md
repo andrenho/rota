@@ -64,14 +64,17 @@ Things included in the VM:
   - [x] Modulo
   - [x] Power
   - [x] Integer division
-- [ ] Equality operators
-- [ ] Byte: expressions
+- [ ] Equality, logical
+  - [ ] Equality
+  - [ ] Logical
+    - [ ] Not
 - [ ] Local variables
   - [ ] Multiple memories
 - [ ] Control flow
 - [ ] Functions
 - [ ] Strings
   - [ ] Fixed strings
+- [ ] Bitwise operators (maybe byte type?)
 - [ ] Tables + GC
 - [ ] Globals
 - [ ] Error handling

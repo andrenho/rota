@@ -74,6 +74,9 @@ OpTable::OpTable()
     BIN_OP(GreaterThan, T_FLOAT, T_INT)   { return a.f() > (float) b.i(); };
     BIN_OP(GreaterThan, T_FLOAT, T_FLOAT) { return a.f() > b.f(); };
 
+    BIN_OP(And, T_INT, T_INT)     { return (bool) (a.i() && b.i()); };
+    BIN_OP(Or,  T_INT, T_INT)     { return (bool) (a.i() || b.i()); };
+
 #undef BIN_OP
 }
 

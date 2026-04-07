@@ -82,6 +82,16 @@ Value Value::operator^(Value const& other) const
     return std::get<Value>(op_table.execute(BinaryOp::Power, *this, other));
 }
 
+bool Value::operator&&(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::And, *this, other));
+}
+
+bool Value::operator||(Value const& other) const
+{
+    return std::get<bool>(op_table.execute(BinaryOp::Or, *this, other));
+}
+
 std::string Value::debug() const
 {
     switch (type_) {

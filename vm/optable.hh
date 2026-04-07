@@ -14,7 +14,7 @@ class Value;
 enum class BinaryOp : size_t {
     Plus, Subtract, Multiply, Divide, IntDivide,
     Modulo, Power,
-    Equals, LessThan, GreaterThan,
+    Equals, LessThan, GreaterThan, And, Or,
     COUNT };
 using BinaryOpRet = std::variant<Value, bool>;
 
