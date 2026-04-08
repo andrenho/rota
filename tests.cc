@@ -101,5 +101,5 @@ int main(int argc, char* argv[])
 
     // functions
 
-    // test("func() {\n return 42\n }()\n", 42);
+    test("func() {\n return 42;\n };\n", 0);
 }

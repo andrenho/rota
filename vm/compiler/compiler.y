@@ -26,7 +26,7 @@ using namespace rotavm;
 void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s);
 %}
 
-%token AND OR NIL FUNC
+%token AND OR NIL FUNC RETURN
 %token DSLASH EQ NEQ GT_EQ LT_EQ
 %token <i> INTEGER
 %token <f> FLOAT
@@ -48,10 +48,12 @@ expressions: expressions expression
            ;
 
 expression: expr ';'          { cc << OpCode::Pop; }
+          | RETURN expr ';'
           ;
 
-expr:
-      '!' expr          { cc << OpCode::Not; }
+expr: function_def
+    | function_call
+    | '!' expr          { cc << OpCode::Not; }
     | expr '+' expr     { cc << OpCode::Sum; }
     | expr '-' expr     { cc << OpCode::Subtract; }
     | expr '*' expr     { cc << OpCode::Multiply; }
@@ -72,6 +74,12 @@ expr:
     | FLOAT             { cc << OpCode::Push << $1; }
     | NIL               { cc << OpCode::Push << Value(); }
     ;
+
+function_def: FUNC '(' ')' '{' expressions '}'
+            ;
+
+function_call: '(' ')'
+             ;
 
 %%
 
