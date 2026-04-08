@@ -34,7 +34,8 @@ void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s);
 %left EQ NEQ GT_EQ LT_EQ '<' '>'
 %left '+' '-'
 %left '*' '/' DSLASH '%'
-%left '^'
+%right '^'
+%right '!'
 %start program
 
 %%
