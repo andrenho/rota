@@ -18,17 +18,22 @@ public:
 
 class RotaStackOverflowError : public RotaException {
 public:
-    RotaStackOverflowError() :RotaException("Stack overflow") {}
+    RotaStackOverflowError() : RotaException("Stack overflow") {}
 };
 
 class RotaStackUndeflowError : public RotaException {
 public:
-    RotaStackUndeflowError() :RotaException("Stack underflow") {}
+    RotaStackUndeflowError() : RotaException("Stack underflow") {}
 };
 
 class RotaInvalidOpcodeError : public RotaException {
 public:
-    RotaInvalidOpcodeError() :RotaException("Invalid opcode") {}
+    RotaInvalidOpcodeError() : RotaException("Invalid opcode") {}
+};
+
+class RotaInvalidNilOperation : public RotaException {
+public:
+    RotaInvalidNilOperation() : RotaException("Invalid 'nil' operation") {}
 };
 
 }

@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
     test("5 // 4\n", 1);
 
     // logic
+
     test("false\n", 0);
     test("true\n", -1);
     test("1 != 0\n", -1);
@@ -83,4 +84,10 @@ int main(int argc, char* argv[])
     test("!1\n", 0);
     test("!0\n", -1);
     test("!(2 > 1 || 1 > 2)\n", 0);
+
+    // nil
+
+    test("nil\n", rotavm::Value());
+    test("nil && true\n", 0);
+    test("nil || true\n", -1);
 }

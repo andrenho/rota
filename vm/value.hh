@@ -12,9 +12,9 @@ namespace rotavm {
 
 class Value {
 public:
-    Value() :type_(T_INT), i_(0) {}
-    explicit Value(int32_t i) :type_(T_INT), i_(i) {}
-    explicit Value(float f) :type_(T_FLOAT), f_(f) {}
+    Value() : type_(T_NIL), i_(0) {}
+    explicit Value(int32_t i) : type_(T_INT), i_(i) {}
+    explicit Value(float f) : type_(T_FLOAT), f_(f) {}
 
     [[nodiscard]] bool operator==(Value const& other) const;
     [[nodiscard]] bool operator!=(Value const& other) const;
