@@ -4,6 +4,7 @@
 #include "vm/opcode.hh"
 #include "vm/value.hh"
 
+#include <stack>
 #include <vector>
 
 namespace rotavm {
@@ -12,6 +13,8 @@ std::vector<uint8_t> compile(std::string const& code);
 
 class CompilationOutput {
 public:
+    CompilationOutput();
+
     CompilationOutput& operator<<(rotavm::OpCode opcode);
     CompilationOutput& operator<<(rotavm::Value const& value);
 

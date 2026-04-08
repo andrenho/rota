@@ -75,8 +75,13 @@ expr: function_def
     | NIL               { cc << OpCode::Push << Value(); }
     ;
 
-function_def: FUNC '(' ')' '{' expressions '}'
+function_def: FUNC '(' function_parameters ')' '{'
+                   expressions
+              '}'
             ;
+
+function_parameters:
+                   ;
 
 function_call: '(' ')'
              ;
