@@ -1,5 +1,8 @@
 #include <stdexcept>
-#include "interpreter/interpreter.hh"
+#include "vm/compiler/compiler.hh"
+#include "vm/rotavm.hh"
+
+static bool debug;
 
 template <typename T>
 static void test(std::string const& code, T const& v_expected)
@@ -7,29 +10,37 @@ static void test(std::string const& code, T const& v_expected)
     rotavm::Value expected(v_expected);
 
     printf("-----------------------------\n");
-
     printf("%s", code.c_str());
 
-    RotaInterpreter itp;
+    rotavm::RotaVM vm;
     try {
-        itp.run(code);
+        vm.set_executable_memory(rotavm::compile(code), true);
 
-        if (itp.peek_vm() != expected) {
-            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(), itp.peek_vm().debug().c_str());
+        if (debug) {
+            printf("%s\n", vm.debug_executable_memory().c_str());
+            printf("%s\n", vm.debug_executable().c_str());
+        }
+
+        vm.run_until_halt();
+
+        if (vm.peek() != expected) {
+            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(), vm.peek().debug().c_str());
             throw std::runtime_error(buf);
         }
 
-        printf("  --> \e[0;32mok (%s)\e[0m\n", itp.peek_vm().debug().c_str());
+        printf("  --> \e[0;32mok (%s)\e[0m\n", vm.peek().debug().c_str());
 
     } catch (std::exception& e) {
         printf("  --> \e[0;31m%s\e[0m\n", e.what());
-        printf("      \e[0;31m"); itp.print_stack(); printf("\e[0m");
+        printf("      \e[0;31m%s\e[0m\n", vm.debug_stack().c_str());
         exit(1);
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    debug = (argc == 2 && std::string(argv[1]) == "-d");
+
     // arithmetic
 
     test("500\n", 500);

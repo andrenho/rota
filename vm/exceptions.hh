@@ -16,6 +16,21 @@ public:
     RotaTypeError() : RotaException("Type error") {}
 };
 
+class RotaStackOverflowError : public RotaException {
+public:
+    RotaStackOverflowError() :RotaException("Stack overflow") {}
+};
+
+class RotaStackUndeflowError : public RotaException {
+public:
+    RotaStackUndeflowError() :RotaException("Stack underflow") {}
+};
+
+class RotaInvalidOpcodeError : public RotaException {
+public:
+    RotaInvalidOpcodeError() :RotaException("Invalid opcode") {}
+};
+
 }
 
 #endif //ROTA_EXCEPTIONS_HH

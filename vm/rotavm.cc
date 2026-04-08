@@ -4,8 +4,127 @@
 
 #include "rotavm.hh"
 #include "exceptions.hh"
+#include "opcode.hh"
 
 namespace rotavm {
+
+//
+// EXECUTABLE
+//
+
+void RotaVM::run_until_halt()
+{
+    for (;;) {
+        if (executable_.at(PC_) == (uint8_t) OpCode::Halt)
+            return;
+        step();
+    }
+}
+
+inline void RotaVM::step()
+{
+    auto pop2 = [this]() -> std::pair<Value, Value> {
+        Value a = pop();
+        Value b = pop();
+        return { a, b };
+    };
+
+    switch ((OpCode) executable_.at(PC_)) {
+        case OpCode::Nop:
+            break;
+        case OpCode::Push: {
+            auto [v, sz] = value_at(PC_ + 1);
+            push(std::move(v));
+            PC_ += sz;
+            break;
+        }
+        case OpCode::Pop:
+            pop();
+            break;
+        case OpCode::Sum: {
+            auto [a, b] = pop2();
+            push(b + a);
+            break;
+        }
+        case OpCode::Subtract: {
+            auto [a, b] = pop2();
+            push(b - a);
+            break;
+        }
+        case OpCode::Multiply: {
+            auto [a, b] = pop2();
+            push(b * a);
+            break;
+        }
+        case OpCode::Divide: {
+            auto [a, b] = pop2();
+            push(b / a);
+            break;
+        }
+        case OpCode::IntDivide: {
+            auto [a, b] = pop2();
+            push(b.int_divide(a));
+            break;
+        }
+        case OpCode::Modulo: {
+            auto [a, b] = pop2();
+            push(b % a);
+            break;
+        }
+        case OpCode::Power: {
+            auto [a, b] = pop2();
+            push(b ^ a);
+            break;
+        }
+        case OpCode::Equals: {
+            auto [a, b] = pop2();
+            push(b == a);
+            break;
+        }
+        case OpCode::NotEqual: {
+            auto [a, b] = pop2();
+            push(b != a);
+            break;
+        }
+        case OpCode::GreaterThan: {
+            auto [a, b] = pop2();
+            push(b > a);
+            break;
+        }
+        case OpCode::LessThan: {
+            auto [a, b] = pop2();
+            push(b < a);
+            break;
+        }
+        case OpCode::GreaterThanOrEqual: {
+            auto [a, b] = pop2();
+            push(b >= a);
+            break;
+        }
+        case OpCode::LessThanOrEqual: {
+            auto [a, b] = pop2();
+            push(b <= a);
+            break;
+        }
+        case OpCode::And: {
+            auto [a, b] = pop2();
+            push(b && a);
+            break;
+        }
+        case OpCode::Or: {
+            auto [a, b] = pop2();
+            push(b || a);
+            break;
+        }
+        case OpCode::Not:
+            push(!pop());
+            break;
+        default:
+            throw RotaInvalidOpcodeError();
+    }
+
+    ++PC_;
+}
 
 //
 // STACK MANIPULATION
@@ -14,14 +133,14 @@ namespace rotavm {
 void RotaVM::push(Value&& value)
 {
     if (stack_idx_ == STACK_SZ)
-        throw RotaException("Stack overflow");
+        throw RotaStackOverflowError();
     stack_[stack_idx_++] = value;
 }
 
 Value RotaVM::pop()
 {
     if (stack_idx_ == 0)
-        throw RotaException("Stack underflow");
+        throw RotaStackUndeflowError();
     return std::move(stack_[--stack_idx_]);
 }
 
@@ -40,36 +159,69 @@ std::string RotaVM::debug_stack() const
     return ret;
 }
 
-//
-// OPERATORS
-//
+std::string RotaVM::debug_executable() const
+{
+    size_t p = 0;
+    std::string out;
 
-#define BINARY_OP(method, operation) void RotaVM::method() { Value a = pop(); Value b = pop(); push(operation); }
-#define UNARY_OP(method, operation) void RotaVM::method() { Value a = pop(); push(operation); }
+    while (p < executable_.size()) {
+        switch ((OpCode) executable_.at(p)) {
+            case OpCode::Nop: out += "\tNOP\n"; break;
+            case OpCode::Push: {
+                auto [v, sz] = value_at(p + 1);
+                out += "\tPUSH " + v.debug() + "\n";
+                p += sz;
+                break;
+            }
+            case OpCode::Pop: out += "\tPOP\n"; break;
+            case OpCode::Sum: out += "\tSUM\n"; break;
+            case OpCode::Subtract: out += "\tSUB\n"; break;
+            case OpCode::Multiply: out += "\tMUL\n"; break;
+            case OpCode::Divide: out += "\tDIV\n"; break;
+            case OpCode::IntDivide: out += "\tIDIV\n"; break;
+            case OpCode::Modulo: out += "\tMOD\n"; break;
+            case OpCode::Power: out += "\tPOW\n"; break;
+            case OpCode::Equals: out += "\tEQ\n"; break;
+            case OpCode::NotEqual: out += "\tNEQ\n"; break;
+            case OpCode::GreaterThan: out += "\tGT\n"; break;
+            case OpCode::LessThan: out += "\tLT\n"; break;
+            case OpCode::GreaterThanOrEqual: out += "\tGTE\n"; break;
+            case OpCode::LessThanOrEqual: out += "\tLTE\n"; break;
+            case OpCode::And: out += "\tAND\n"; break;
+            case OpCode::Or: out += "\tOR\n"; break;
+            case OpCode::Not: out += "\tNOT\n"; break;
+            case OpCode::Halt: out += "\tHALT\n"; break;
+        }
 
-// arithmetic
+        ++p;
+    }
 
-BINARY_OP(sum,      b + a)
-BINARY_OP(subtract, b - a)
-BINARY_OP(multiply, b * a)
-BINARY_OP(divide,   b / a)
-BINARY_OP(idivide,  b.int_divide(a))
-BINARY_OP(modulo,   b % a)
-BINARY_OP(power,    b ^ a);
+    return out;
+}
 
-// logic
+std::string RotaVM::debug_executable_memory() const
+{
+    std::string out;
 
-BINARY_OP(equals,                b == a)
-BINARY_OP(not_equal,             b != a)
-BINARY_OP(greater_than,          b > a)
-BINARY_OP(less_than,             b < a)
-BINARY_OP(greater_than_or_equal, b >= a)
-BINARY_OP(less_than_or_equal,    b <= a)
-BINARY_OP(and_,                  b && a)
-BINARY_OP(or_,                   b || a)
-UNARY_OP(not_,                   !a)
+    for (auto b: executable_) {
+        char buf[4];
+        sprintf(buf, "%02X ", b);
+        out += buf;
+    }
 
-#undef BINARY_OP
-#undef UNARY_OP
+    return out;
+}
+
+std::pair<Value, size_t> RotaVM::value_at(size_t pc) const
+{
+    return Value::from_bytes(&executable_.at(pc), executable_.size() - pc);
+}
+
+void RotaVM::set_executable_memory(std::vector<uint8_t> const& data, bool add_halt)
+{
+    executable_ = data;
+    if (add_halt)
+        executable_.push_back((uint8_t) OpCode::Halt);
+}
 
 }

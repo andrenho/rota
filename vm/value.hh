@@ -2,7 +2,9 @@
 #define ROTA_VALUE_HH
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #include "type.hh"
 
@@ -11,7 +13,7 @@ namespace rotavm {
 class Value {
 public:
     Value() :type_(T_INT), i_(0) {}
-    explicit Value(int i) :type_(T_INT), i_(i) {}
+    explicit Value(int32_t i) :type_(T_INT), i_(i) {}
     explicit Value(float f) :type_(T_FLOAT), f_(f) {}
 
     [[nodiscard]] bool operator==(Value const& other) const;
@@ -40,11 +42,14 @@ public:
 
     [[nodiscard]] std::string debug() const;
 
+    std::vector<uint8_t> to_bytes() const;
+    static std::pair<Value, size_t> from_bytes(uint8_t const* data, size_t max_bytes);
+
 private:
     Type type_;
     union {
-        int i_;
-        float f_;
+        int32_t i_;
+        float   f_;
     };
 
     static class OpTable const& op_table;
