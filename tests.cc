@@ -47,55 +47,59 @@ int main(int argc, char* argv[])
 
     // arithmetic
 
-    test("500\n", 500);
-    test("500 + 30\n", 530);
-    test("1.2f + 4\n", 5.2f);
-    test("500 - 30\n", 470);
-    test("65 / 5\n", 13.f);
-    test("1 + 4 * 3\n", 13);
-    test("(1 + 4) * 3\n", 15);
-    test("1.2f\n", 1.2f);
-    test("1.2f + 4\n", 5.2f);
-    test("-500\n", -500);
-    test("500 + -30\n", 470);
-    test("500 - -30\n", 530);
-    test("5 % 3\n", 2);
-    test("5 ^ 3\n", 125);
-    test("2 / 4\n", 0.5f);
-    test("5 // 4\n", 1);
+    test("500;", 500);
+    test("500 + 30;", 530);
+    test("1.2f + 4;", 5.2f);
+    test("500 - 30;", 470);
+    test("65 / 5;", 13.f);
+    test("1 + 4 * 3;", 13);
+    test("(1 + 4) * 3;", 15);
+    test("1.2f;", 1.2f);
+    test("1.2f + 4;", 5.2f);
+    test("-500;", -500);
+    test("500 + -30;", 470);
+    test("500 - -30;", 530);
+    test("5 % 3;", 2);
+    test("5 ^ 3;", 125);
+    test("2 / 4;", 0.5f);
+    test("5 // 4;", 1);
 
     // logic
 
-    test("false\n", 0);
-    test("true\n", -1);
-    test("1 != 0\n", -1);
-    test("1 == 0\n", 0);
-    test("1 != 1\n", 0);
-    test("1 == 1\n", -1);
-    test("2 >= 1\n", -1);
-    test("1 >= 2\n", 0);
-    test("1 >= 1\n", -1);
-    test("1 > 1\n", 0);
-    test("-1 && -1\n", -1);
-    test("0 && -1\n", 0);
-    test("0 && 0\n", 0);
-    test("-1 || -1\n", -1);
-    test("500 || 0\n", -1);
-    test("0 || -1\n", -1);
-    test("0 || 0\n", 0);
-    test("2 > 1 && 1 > 2\n", 0);
-    test("2 > 1 || 1 > 2\n", -1);
-    test("!1\n", 0);
-    test("!0\n", -1);
-    test("!(2 > 1 || 1 > 2)\n", 0);
+    test("false;", 0);
+    test("true;", -1);
+    test("1 != 0;", -1);
+    test("1 == 0;", 0);
+    test("1 != 1;", 0);
+    test("1 == 1;", -1);
+    test("2 >= 1;", -1);
+    test("1 >= 2;", 0);
+    test("1 >= 1;", -1);
+    test("1 > 1;", 0);
+    test("-1 && -1;", -1);
+    test("0 && -1;", 0);
+    test("0 && 0;", 0);
+    test("-1 || -1;", -1);
+    test("500 || 0;", -1);
+    test("0 ||\n -1;", -1);
+    test("0 || 0;", 0);
+    test("2 > 1 && 1 > 2;", 0);
+    test("2 > 1 || 1 > 2;", -1);
+    test("!1;", 0);
+    test("!0;", -1);
+    test("!(2 > 1 || 1 > 2);", 0);
 
     // nil
 
-    test("nil\n", rotavm::Value());
-    test("nil && true\n", 0);
-    test("nil || true\n", -1);
+    test("nil;", rotavm::Value());
+    test("nil && true;", 0);
+    test("nil || true;", -1);
 
     // multiple expressions
 
-    test("42\n3 + 4\n", 7);
+    test("42; 3 + 4;", 7);
+
+    // functions
+
+    // test("func() {\n return 42\n }()\n", 42);
 }
