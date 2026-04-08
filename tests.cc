@@ -29,6 +29,9 @@ static void test(std::string const& code, T const& v_expected)
             throw std::runtime_error(buf);
         }
 
+        if (vm.stack_sz() != 0)
+            throw std::runtime_error("Queue not empty (size " + std::to_string(vm.stack_sz()) + ")");
+
         printf("  --> \e[0;32mok (%s)\e[0m\n", vm.last_value().debug().c_str());
 
     } catch (std::exception& e) {
@@ -91,4 +94,8 @@ int main(int argc, char* argv[])
     test("nil\n", rotavm::Value());
     test("nil && true\n", 0);
     test("nil || true\n", -1);
+
+    // multiple expressions
+
+    test("42\n3 + 4\n", 7);
 }
