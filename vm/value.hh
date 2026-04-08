@@ -7,9 +7,16 @@
 #include <vector>
 
 #include "type.hh"
-#include "function.hh"
 
 namespace rotavm {
+
+using FunctionId = size_t;
+
+struct Function {
+    explicit Function(FunctionId id) : id(id) {}
+
+    FunctionId id;
+};
 
 class Value {
 public:
