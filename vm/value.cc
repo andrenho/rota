@@ -55,17 +55,17 @@ std::pair<Value, size_t> Value::from_bytes(uint8_t const* data, size_t max_bytes
         case TB_INT8: {
             if (max_bytes < 2)
                 throw std::runtime_error("truncated INT8");
-            return { Value((int) data[1]), 2 };
+            return { Value((int8_t) data[1]), 2 };
         }
         case TB_INT16: {
             if (max_bytes < 3)
                 throw std::runtime_error("truncated INT16");
-            return { Value((int) (data[1] | (data[2] << 8))), 3 };
+            return { Value((int16_t) (data[1] | (data[2] << 8))), 3 };
         }
         case TB_INT32: {
             if (max_bytes < 5)
                 throw std::runtime_error("truncated INT32");
-            return { Value((int) (data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24))), 5 };
+            return { Value((int32_t) (data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24))), 5 };
         }
         case TB_FLOAT: {
             if (max_bytes < 5)
