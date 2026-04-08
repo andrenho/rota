@@ -21,7 +21,7 @@ public:
     void run_until_halt();
 
     // debug
-    [[nodiscard]] Value const& peek() const;
+    [[nodiscard]] Value const& last_value() const { return last_value_; }
     [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }
     [[nodiscard]] std::string  debug_stack() const;
     [[nodiscard]] std::string  debug_executable() const;
@@ -31,6 +31,7 @@ private:
     std::array<Value, STACK_SZ> stack_ {};
     size_t                      stack_idx_ = 0;
     std::vector<uint8_t>        executable_;
+    Value                       last_value_;
     uint32_t                    PC_ = 0;
 
     void step();
