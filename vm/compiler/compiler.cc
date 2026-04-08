@@ -5,10 +5,6 @@
 
 namespace rotavm {
 
-CompilationOutput::CompilationOutput()
-{
-}
-
 std::vector<uint8_t> compile(std::string const& code)
 {
     yyscan_t scanner;
@@ -22,15 +18,35 @@ std::vector<uint8_t> compile(std::string const& code)
 
 rotavm::CompilationOutput& CompilationOutput::operator<<(rotavm::OpCode opcode)
 {
-    data_.push_back((uint8_t) opcode);
+    data_.at(current_fn_id_).push_back((uint8_t) opcode);
     return *this;
 }
 
 rotavm::CompilationOutput& CompilationOutput::operator<<(rotavm::Value const& value)
 {
+    auto& data = data_.at(current_fn_id_);
+
     auto dvalue = value.to_bytes();
-    data_.insert(data_.end(), dvalue.begin(), dvalue.end());
+    data.insert(data.end(), dvalue.begin(), dvalue.end());
     return *this;
+}
+
+void CompilationOutput::add_function()
+{
+    FunctionId f_id = function_id_counter_++;
+    *this << OpCode::Push << Function(current_fn_id_);
+    current_fn_id_ = f_id;
+    data_[current_fn_id_] = {};
+}
+
+void CompilationOutput::end_function()
+{
+    current_fn_id_ = MAIN_FUNCTION;
+}
+
+std::vector<uint8_t> const& CompilationOutput::data() const
+{
+    return data_.at(current_fn_id_);
 }
 
 }

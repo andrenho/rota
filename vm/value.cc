@@ -20,7 +20,7 @@ OpTable const& Value::op_table = op_tabl;
 //
 
 enum TypeByte {
-    TB_NIL=0x0, TB_INT8=0x1, TB_INT16=0x2, TB_INT32=0x3, TB_FLOAT=0x4,
+    TB_NIL=0x0, TB_INT8=0x1, TB_INT16=0x2, TB_INT32=0x3, TB_FLOAT=0x4, TB_FUNCTION8=0x5, TB_FUNCTION16=0x6,
 };
 
 std::vector<uint8_t> Value::to_bytes() const
@@ -40,6 +40,12 @@ std::vector<uint8_t> Value::to_bytes() const
             uint32_t bits;
             std::memcpy(&bits, &f_, 4);
             return { TB_FLOAT, (uint8_t) (bits & 0xff), (uint8_t) ((bits >> 8) & 0xff), (uint8_t) ((bits >> 16) & 0xff), (uint8_t) ((bits >> 24) & 0xff) };
+        }
+        case T_FUNCTION: {
+            if (fn_.id >= std::numeric_limits<int8_t>::min() && fn_.id <= std::numeric_limits<int8_t>::max())
+                return {TB_FUNCTION8, (uint8_t) (fn_.id & 0xff) };
+            else
+                return {TB_FUNCTION16, (uint8_t) (fn_.id & 0xff), (uint8_t) ((fn_.id >> 8) & 0xff) };
         }
         default:
             throw std::runtime_error("not implemented");
@@ -78,6 +84,16 @@ std::pair<Value, size_t> Value::from_bytes(uint8_t const* data, size_t max_bytes
             float f;
             std::memcpy(&f, &bits, 4);
             return { Value(f), 5 };
+        }
+        case TB_FUNCTION8: {
+            if (max_bytes < 2)
+                throw std::runtime_error("truncated FUNCTION8");
+            return { Value(Function((int8_t) data[1])), 2 };
+        }
+        case TB_FUNCTION16: {
+            if (max_bytes < 3)
+                throw std::runtime_error("truncated FUNCTION16");
+            return { Value(Function((int16_t) (data[1] | (data[2] << 8)))), 3 };
         }
         default:
             throw std::runtime_error("unknown type byte");
@@ -174,6 +190,7 @@ std::string Value::debug() const
         case T_NIL: return "nil";
         case T_INT: return std::to_string(i_);
         case T_FLOAT: return std::to_string(f_);
+        case T_FUNCTION: return "fn(" + std::to_string(fn_.id) + ")";
         default: throw std::runtime_error("not implemented");
     }
 }

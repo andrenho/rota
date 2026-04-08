@@ -39,7 +39,7 @@ private:
     [[nodiscard]] std::pair<Value, size_t> value_at(size_t pc) const;
 
     // stack manipulation
-    void         push(Value&& value);   // +1
+    void         push(Value const& value);   // +1
     void         push(bool v) { push(Value(v ? -1 : 0)); }
     Value        pop();                 // -1
 };

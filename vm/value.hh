@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "type.hh"
+#include "function.hh"
 
 namespace rotavm {
 
@@ -15,6 +16,7 @@ public:
     Value() : type_(T_NIL), i_(0) {}
     explicit Value(int32_t i) : type_(T_INT), i_(i) {}
     explicit Value(float f) : type_(T_FLOAT), f_(f) {}
+    explicit Value(Function const& fn) : type_(T_FUNCTION), fn_(fn) {}
 
     [[nodiscard]] bool operator==(Value const& other) const;
     [[nodiscard]] bool operator!=(Value const& other) const;
@@ -42,58 +44,19 @@ public:
 
     [[nodiscard]] std::string debug() const;
 
-    std::vector<uint8_t> to_bytes() const;
-    static std::pair<Value, size_t> from_bytes(uint8_t const* data, size_t max_bytes);
+    [[nodiscard]] std::vector<uint8_t> to_bytes() const;
+    [[nodiscard]] static std::pair<Value, size_t> from_bytes(uint8_t const* data, size_t max_bytes);
 
 private:
     Type type_;
     union {
-        int32_t i_;
-        float   f_;
+        int32_t  i_;
+        float    f_;
+        Function fn_;
     };
 
     static class OpTable const& op_table;
 };
-
-/*
-class ValueInt;
-class ValueFloat;
-
-class ValueInt {
-public:
-    ValueInt() : value_(0) {}
-    explicit ValueInt(int v) : value_(v) {}
-
-    auto operator<=>(ValueInt const& i) const = default;
-    std::strong_ordering operator<=>(ValueFloat const& f);
-
-    ValueInt operator+(ValueInt const& i) const;
-    ValueFloat operator+(ValueFloat const& f) const;
-
-private:
-    int value_;
-};
-
-class ValueFloat {
-public:
-    ValueFloat() : value_(0.f) {}
-    explicit ValueFloat(float f) : value_(f) {}
-
-    std::strong_ordering operator<=>(ValueInt const& i);
-    auto operator<=>(ValueFloat const& f) const = default;
-
-    ValueFloat operator+(ValueFloat const& f) const;
-    ValueFloat operator+(ValueInt const& i) const;
-
-private:
-    float value_;
-};
-
-using Value = std::variant<ValueInt, ValueFloat>;
-
-int   to_int(Value const& v);
-float to_float(Value const& v);
- */
 
 }
 

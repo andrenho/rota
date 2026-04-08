@@ -130,7 +130,7 @@ inline void RotaVM::step()
 // STACK MANIPULATION
 //
 
-void RotaVM::push(Value&& value)
+void RotaVM::push(Value const& value)
 {
     if (stack_idx_ == STACK_SZ)
         throw RotaStackOverflowError();
