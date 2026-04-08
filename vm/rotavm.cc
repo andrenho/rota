@@ -141,14 +141,10 @@ Value RotaVM::pop()
 {
     if (stack_idx_ == 0)
         throw RotaStackUndeflowError();
-    return std::move(stack_[--stack_idx_]);
-}
-
-Value const& RotaVM::peek() const
-{
+    Value v = stack_[--stack_idx_];
     if (stack_idx_ == 0)
-        throw RotaException("Stack underflow");
-    return stack_[stack_idx_ - 1];
+        last_value_ = v;
+    return v;
 }
 
 std::string RotaVM::debug_stack() const
@@ -220,8 +216,6 @@ std::pair<Value, size_t> RotaVM::value_at(size_t pc) const
 void RotaVM::set_executable_memory(std::vector<uint8_t> const& data, bool add_halt)
 {
     executable_ = data;
-    if (add_halt)
-        executable_.push_back((uint8_t) OpCode::Halt);
 }
 
 }

@@ -23,12 +23,16 @@ static void test(std::string const& code, T const& v_expected)
 
         vm.run_until_halt();
 
-        if (vm.peek() != expected) {
-            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(), vm.peek().debug().c_str());
+        if (vm.last_value() != expected) {
+            char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(),
+                    vm.last_value().debug().c_str());
             throw std::runtime_error(buf);
         }
 
-        printf("  --> \e[0;32mok (%s)\e[0m\n", vm.peek().debug().c_str());
+        if (vm.stack_sz() != 0)
+            throw std::runtime_error("Queue not empty (size " + std::to_string(vm.stack_sz()) + ")");
+
+        printf("  --> \e[0;32mok (%s)\e[0m\n", vm.last_value().debug().c_str());
 
     } catch (std::exception& e) {
         printf("  --> \e[0;31m%s\e[0m\n", e.what());
@@ -90,4 +94,8 @@ int main(int argc, char* argv[])
     test("nil\n", rotavm::Value());
     test("nil && true\n", 0);
     test("nil || true\n", -1);
+
+    // multiple expressions
+
+    test("42\n3 + 4\n", 7);
 }
