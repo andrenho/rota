@@ -20,13 +20,15 @@ OpTable const& Value::op_table = op_tabl;
 //
 
 enum TypeByte {
-    TB_INT8=0x0, TB_INT16=0x1, TB_INT32=0x2, TB_FLOAT=0x3,
+    TB_NIL=0x0, TB_INT8=0x1, TB_INT16=0x2, TB_INT32=0x3, TB_FLOAT=0x4,
 };
 
 std::vector<uint8_t> Value::to_bytes() const
 {
     std::vector<uint8_t> bytes;
     switch (type_) {
+        case T_NIL:
+            return { TB_NIL };
         case T_INT:
             if (i_ >= std::numeric_limits<int8_t>::min() && i_ <= std::numeric_limits<int8_t>::max())
                 return {TB_INT8, (uint8_t) (i_ & 0xff) };
@@ -52,6 +54,8 @@ std::pair<Value, size_t> Value::from_bytes(uint8_t const* data, size_t max_bytes
     auto type = (TypeByte) data[0];
 
     switch (type) {
+        case TB_NIL:
+            return { Value(), 1 };
         case TB_INT8: {
             if (max_bytes < 2)
                 throw std::runtime_error("truncated INT8");
@@ -167,6 +171,7 @@ bool Value::operator!() const
 std::string Value::debug() const
 {
     switch (type_) {
+        case T_NIL: return "nil";
         case T_INT: return std::to_string(i_);
         case T_FLOAT: return std::to_string(f_);
         default: throw std::runtime_error("not implemented");

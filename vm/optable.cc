@@ -13,14 +13,20 @@ OpTable::OpTable()
     for (size_t i = 0; i < (size_t) BinaryOp::COUNT; ++i) {
         for (size_t j = 0; j < (size_t) T_COUNT; ++j) {
             for (size_t k = 0; k < (size_t) T_COUNT; ++k) {
-                binary_op_[i][j][k] = [](Value const&, Value const&) -> OpRet { throw RotaTypeError(); };
+                if (j == T_NIL || k == T_NIL)
+                    binary_op_[i][j][k] = [](Value const&, Value const&) -> OpRet { throw RotaInvalidNilOperation(); };
+                else
+                    binary_op_[i][j][k] = [](Value const&, Value const&) -> OpRet { throw RotaTypeError(); };
             }
         }
     }
 
     for (size_t i = 0; i < (size_t) UnaryOp::COUNT; ++i) {
         for (size_t j = 0; j < (size_t) T_COUNT; ++j) {
-            unary_op_[i][j] = [](Value const&) -> OpRet { throw RotaTypeError(); };
+            if (j == T_NIL)
+                unary_op_[i][j] = [](Value const&) -> OpRet { throw RotaInvalidNilOperation(); };
+            else
+                unary_op_[i][j] = [](Value const&) -> OpRet { throw RotaTypeError(); };
         }
     }
 
@@ -65,8 +71,13 @@ OpTable::OpTable()
     BIN_OP(Power, T_FLOAT, T_INT)   { return Value(powf(a.f(), (float) b.i())); };
     BIN_OP(Power, T_FLOAT, T_FLOAT) { return Value(powf(a.f(), b.f())); };
 
+    BIN_OP(Equals, T_NIL, T_NIL)     { return true; };
+    BIN_OP(Equals, T_NIL, T_INT)     { return false; };
+    BIN_OP(Equals, T_NIL, T_FLOAT)   { return false; };
+    BIN_OP(Equals, T_INT, T_NIL)     { return false; };
     BIN_OP(Equals, T_INT, T_INT)     { return a.i() == b.i(); };
     BIN_OP(Equals, T_INT, T_FLOAT)   { return std::fabs((float) a.i() - b.f()) < std::numeric_limits<float>::epsilon(); };
+    BIN_OP(Equals, T_FLOAT, T_NIL)   { return false; };
     BIN_OP(Equals, T_FLOAT, T_INT)   { return std::fabs(a.f() - (float) b.i()) < std::numeric_limits<float>::epsilon(); };
     BIN_OP(Equals, T_FLOAT, T_FLOAT) { return std::fabs(a.f() - b.f()) < std::numeric_limits<float>::epsilon(); };
 
@@ -80,8 +91,13 @@ OpTable::OpTable()
     BIN_OP(GreaterThan, T_FLOAT, T_INT)   { return a.f() > (float) b.i(); };
     BIN_OP(GreaterThan, T_FLOAT, T_FLOAT) { return a.f() > b.f(); };
 
+    BIN_OP(And, T_NIL, T_INT)     { return false; };
     BIN_OP(And, T_INT, T_INT)     { return (bool) (a.i() && b.i()); };
+    BIN_OP(And, T_INT, T_NIL)     { return false; };
+
+    BIN_OP(Or,  T_NIL, T_INT)     { return (bool) b.i(); };
     BIN_OP(Or,  T_INT, T_INT)     { return (bool) (a.i() || b.i()); };
+    BIN_OP(Or,  T_INT, T_NIL)     { return (bool) a.i(); };
 #undef BIN_OP
 
 #define UNARY_OP(OP, TYPE) unary_op_[(size_t) UnaryOp::OP][TYPE] = [](Value const& a) -> OpRet

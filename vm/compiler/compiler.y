@@ -26,7 +26,7 @@ using namespace rotavm;
 void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s);
 %}
 
-%token AND OR
+%token AND OR NIL
 %token DSLASH EQ NEQ GT_EQ LT_EQ
 %token <i> INTEGER
 %token <f> FLOAT
@@ -62,6 +62,7 @@ expr:
     | '(' expr ')'
     | INTEGER           { cc << OpCode::Push << $1; }
     | FLOAT             { cc << OpCode::Push << $1; }
+    | NIL               { cc << OpCode::Push << Value(); }
     ;
 
 %%
