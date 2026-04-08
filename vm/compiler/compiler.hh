@@ -10,30 +10,28 @@
 
 namespace rotavm {
 
-std::vector<uint8_t> compile(std::string const& code);
-
-class CompilationOutput {
+class Executable {
 public:
-    CompilationOutput& operator<<(rotavm::OpCode opcode);
-    CompilationOutput& operator<<(rotavm::Value const& value);
+    using Token = std::variant<rotavm::OpCode, rotavm::Value>;
 
-    template <typename T>
-    CompilationOutput& operator<<(T const& t) { *this << Value(t); return *this; }
+    struct Function {
+        std::vector<Token> tokens;
+    };
 
-    [[nodiscard]] std::vector<uint8_t> const& data() const;
+    Executable& operator<<(Token const& token);
 
     void add_function();
     void end_function();
 
-private:
-    static constexpr FunctionId MAIN_FUNCTION = 0;
+    [[nodiscard]] Token token(FunctionId f_id, size_t pos) const { return functions_.at(f_id).tokens.at(pos); }
 
-    FunctionId function_id_counter_ = 1;
-    FunctionId current_fn_id_ = MAIN_FUNCTION;
-    std::unordered_map<FunctionId, std::vector<uint8_t>> data_ = {
-            { MAIN_FUNCTION, {} },
-    };
+private:
+    size_t current_function_ = 0;
+    std::vector<Function> functions_ = { { /* main */ } };
 };
+
+
+Executable compile(std::string const& code);
 
 }
 

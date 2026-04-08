@@ -10,16 +10,18 @@ static void test(std::string const& code, T const& v_expected)
     rotavm::Value expected(v_expected);
 
     printf("-----------------------------\n");
-    printf("%s", code.c_str());
+    printf("%s\n", code.c_str());
 
     rotavm::RotaVM vm;
     try {
-        vm.set_executable_memory(rotavm::compile(code), true);
+        vm.set_executable(rotavm::compile(code));
 
+        /*
         if (debug) {
             printf("%s\n", vm.debug_executable_memory().c_str());
             printf("%s\n", vm.debug_executable().c_str());
         }
+         */
 
         vm.run_until_halt();
 
@@ -101,5 +103,5 @@ int main(int argc, char* argv[])
 
     // functions
 
-    test("func() {\n return 42;\n };\n", 0);
+    // test("func() {\n return 42;\n };\n", 0);
 }

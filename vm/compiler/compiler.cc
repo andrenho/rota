@@ -5,24 +5,42 @@
 
 namespace rotavm {
 
-std::vector<uint8_t> compile(std::string const& code)
+Executable compile(std::string const& code)
 {
     yyscan_t scanner;
     yylex_init(&scanner);
     YY_BUFFER_STATE buf = yy_scan_string(code.c_str(), scanner);
-    CompilationOutput cc;
-    yyparse(scanner, cc);
+    Executable exec;
+    yyparse(scanner, exec);
     yy_delete_buffer(buf, scanner);
-    return cc.data();
+    return exec;
 }
 
-rotavm::CompilationOutput& CompilationOutput::operator<<(rotavm::OpCode opcode)
+Executable& Executable::operator<<(Executable::Token const& token)
+{
+    functions_.at(current_function_).tokens.push_back(token);
+    return *this;
+}
+
+void Executable::add_function()
+{
+    // TODO
+}
+
+void Executable::end_function()
+{
+    // TODO
+}
+
+
+/*
+rotavm::ExecutableFunction& ExecutableFunction::operator<<(rotavm::OpCode opcode)
 {
     data_.at(current_fn_id_).push_back((uint8_t) opcode);
     return *this;
 }
 
-rotavm::CompilationOutput& CompilationOutput::operator<<(rotavm::Value const& value)
+rotavm::ExecutableFunction& ExecutableFunction::operator<<(rotavm::Value const& value)
 {
     auto& data = data_.at(current_fn_id_);
 
@@ -31,7 +49,7 @@ rotavm::CompilationOutput& CompilationOutput::operator<<(rotavm::Value const& va
     return *this;
 }
 
-void CompilationOutput::add_function()
+void ExecutableFunction::add_function()
 {
     FunctionId f_id = function_id_counter_++;
     *this << OpCode::Push << Function(current_fn_id_);
@@ -39,14 +57,15 @@ void CompilationOutput::add_function()
     data_[current_fn_id_] = {};
 }
 
-void CompilationOutput::end_function()
+void ExecutableFunction::end_function()
 {
     current_fn_id_ = MAIN_FUNCTION;
 }
 
-std::vector<uint8_t> const& CompilationOutput::data() const
+std::vector<uint8_t> const& ExecutableFunction::data() const
 {
     return data_.at(current_fn_id_);
 }
+ */
 
 }

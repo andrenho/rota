@@ -7,7 +7,7 @@
 
 %define api.pure full
 %param { yyscan_t scanner }
-%parse-param { rotavm::CompilationOutput& cc }
+%parse-param { rotavm::Executable& exec }
 
 %union {
     int i;
@@ -23,7 +23,7 @@
 
 using namespace rotavm;
 
-void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s);
+void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s);
 %}
 
 %token AND OR NIL FUNC RETURN
@@ -40,44 +40,44 @@ void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s);
 
 %%
 
-program: expressions    { cc << OpCode::Halt; }
+program: expressions    { exec << OpCode::Halt; }
        ;
 
 expressions: expressions expression
            | expression
            ;
 
-expression: expr ';'          { cc << OpCode::Pop; }
+expression: expr ';'          { exec << OpCode::Pop; }
           | RETURN expr ';'
           ;
 
 expr: function_def
     | function_call
-    | '!' expr          { cc << OpCode::Not; }
-    | expr '+' expr     { cc << OpCode::Sum; }
-    | expr '-' expr     { cc << OpCode::Subtract; }
-    | expr '*' expr     { cc << OpCode::Multiply; }
-    | expr '/' expr     { cc << OpCode::Divide; }
-    | expr '%' expr     { cc << OpCode::Modulo; }
-    | expr '^' expr     { cc << OpCode::Power; }
-    | expr DSLASH expr  { cc << OpCode::IntDivide; }
-    | expr EQ expr      { cc << OpCode::Equals; }
-    | expr NEQ expr     { cc << OpCode::NotEqual; }
-    | expr '>' expr     { cc << OpCode::GreaterThan; }
-    | expr '<' expr     { cc << OpCode::LessThan; }
-    | expr GT_EQ expr   { cc << OpCode::GreaterThanOrEqual; }
-    | expr LT_EQ expr   { cc << OpCode::LessThanOrEqual; }
-    | expr AND expr     { cc << OpCode::And; }
-    | expr OR expr      { cc << OpCode::Or; }
+    | '!' expr          { exec << OpCode::Not; }
+    | expr '+' expr     { exec << OpCode::Sum; }
+    | expr '-' expr     { exec << OpCode::Subtract; }
+    | expr '*' expr     { exec << OpCode::Multiply; }
+    | expr '/' expr     { exec << OpCode::Divide; }
+    | expr '%' expr     { exec << OpCode::Modulo; }
+    | expr '^' expr     { exec << OpCode::Power; }
+    | expr DSLASH expr  { exec << OpCode::IntDivide; }
+    | expr EQ expr      { exec << OpCode::Equals; }
+    | expr NEQ expr     { exec << OpCode::NotEqual; }
+    | expr '>' expr     { exec << OpCode::GreaterThan; }
+    | expr '<' expr     { exec << OpCode::LessThan; }
+    | expr GT_EQ expr   { exec << OpCode::GreaterThanOrEqual; }
+    | expr LT_EQ expr   { exec << OpCode::LessThanOrEqual; }
+    | expr AND expr     { exec << OpCode::And; }
+    | expr OR expr      { exec << OpCode::Or; }
     | '(' expr ')'
-    | INTEGER           { cc << OpCode::Push << $1; }
-    | FLOAT             { cc << OpCode::Push << $1; }
-    | NIL               { cc << OpCode::Push << Value(); }
+    | INTEGER           { exec << OpCode::Push << Value($1); }
+    | FLOAT             { exec << OpCode::Push << Value($1); }
+    | NIL               { exec << OpCode::Push << Value(); }
     ;
 
-function_def: FUNC '(' function_parameters ')' { cc.add_function(); } '{'
+function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
                    expressions
-              '}' { cc.end_function(); }
+              '}' { exec.end_function(); }
             ;
 
 function_parameters:
@@ -88,6 +88,6 @@ function_call: '(' ')'
 
 %%
 
-void yyerror(yyscan_t scanner, rotavm::CompilationOutput&, const char *s) {
+void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s) {
     throw std::runtime_error(std::string("error: ") + s);
 }
