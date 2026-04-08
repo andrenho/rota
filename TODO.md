@@ -68,6 +68,8 @@ Things included in the VM:
   - [x] Equality
   - [x] Logical
     - [x] Not
+- [ ] Nil
+- [ ] Multiple expressions
 - [ ] Local variables
   - [ ] Multiple memories
 - [ ] Control flow
