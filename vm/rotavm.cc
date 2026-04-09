@@ -37,7 +37,6 @@ inline bool RotaVM::step()
             break;
         case OpCode::Push: {
             push(*token.p1);
-            ++PC_;
             break;
         }
         case OpCode::Pop:
