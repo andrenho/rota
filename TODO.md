@@ -70,12 +70,15 @@ Things included in the VM:
     - [x] Not
 - [x] Nil
 - [x] Multiple expressions
-- [ ] Functions
+- [x] Functions
   - [x] New output format
-  - [ ] Reorganize code
-  - [ ] Executable smaller, pair opcode with argument
+  - [x] Reorganize code
+  - [x] Executable smaller, pair opcode with argument
+  - [ ] Basic function call
 - [ ] Local variables
   - [ ] Multiple memories
+  - [ ] Function parameters
+  - [ ] Call function with parameters
 - [ ] Control flow
 - [ ] Strings
   - [ ] Fixed strings
