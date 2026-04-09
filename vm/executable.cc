@@ -31,7 +31,7 @@ std::string Executable::debug() const
     std::string out;
 
     for (size_t i = 0; i < functions_.size(); ++i) {
-        out += ".func #" + std::to_string(i) + "\n";
+        out += ".func fn(" + std::to_string(i) + ")\n";
         for (auto const& tok: functions_.at(i).tokens) {
             out += std::string("\t") + opcode_name(tok.opcode);
             if (tok.p1)

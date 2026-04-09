@@ -52,7 +52,6 @@ expression: expr ';'          { exec.add(OpCode::Pop); }
           ;
 
 expr: function_def
-    | function_call
     | '!' expr          { exec.add(OpCode::Not); }
     | expr '+' expr     { exec.add(OpCode::Sum); }
     | expr '-' expr     { exec.add(OpCode::Subtract); }
@@ -73,6 +72,7 @@ expr: function_def
     | INTEGER           { exec.add(OpCode::Push, Value($1)); }
     | FLOAT             { exec.add(OpCode::Push, Value($1)); }
     | NIL               { exec.add(OpCode::Push, Value()); }
+    | expr '(' ')'      { exec.add(OpCode::Call, Value(0)); }
     ;
 
 function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
@@ -82,9 +82,6 @@ function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
 
 function_parameters:
                    ;
-
-function_call: '(' ')'
-             ;
 
 %%
 
