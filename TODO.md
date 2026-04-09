@@ -74,7 +74,7 @@ Things included in the VM:
   - [x] New output format
   - [x] Reorganize code
   - [x] Executable smaller, pair opcode with argument
-  - [ ] Basic function call
+  - [x] Basic function call
 - [ ] Local variables
   - [ ] Multiple memories
   - [ ] Function parameters
