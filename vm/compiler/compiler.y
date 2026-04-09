@@ -48,7 +48,7 @@ expressions: expressions expression
            ;
 
 expression: expr ';'          { exec.add(OpCode::Pop); }
-          | RETURN expr ';'
+          | RETURN expr ';'   { exec.add(OpCode::Return); }
           ;
 
 expr: function_def

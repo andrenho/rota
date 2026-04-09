@@ -14,12 +14,16 @@ void Executable::add(OpCode opcode, Value const& p1)
 
 void Executable::add_function()
 {
-    // TODO
+    functions_.at(current_function_).tokens.emplace_back(OpCode::Push, Value(rotavm::Function(current_function_ + 1)));
+    functions_.emplace_back();
+    ++current_function_;
 }
 
 void Executable::end_function()
 {
-    // TODO
+    functions_.at(current_function_).tokens.emplace_back(OpCode::Push, Value());
+    functions_.at(current_function_).tokens.emplace_back(OpCode::Return);
+    current_function_ = 0;
 }
 
 std::string Executable::debug() const
@@ -27,7 +31,7 @@ std::string Executable::debug() const
     std::string out;
 
     for (size_t i = 0; i < functions_.size(); ++i) {
-        out += ".func #" + std::to_string(i) + " " + functions_.at(i).name + "\n";
+        out += ".func #" + std::to_string(i) + "\n";
         for (auto const& tok: functions_.at(i).tokens) {
             out += std::string("\t") + opcode_name(tok.opcode);
             if (tok.p1)

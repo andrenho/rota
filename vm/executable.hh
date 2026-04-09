@@ -22,7 +22,6 @@ public:
     };
 
     struct Function {
-        std::string        name;
         std::vector<Token> tokens;
     };
 
@@ -38,7 +37,7 @@ public:
 
 private:
     size_t current_function_ = 0;
-    std::vector<Function> functions_ = { { .name = "#main", .tokens = {} } };
+    std::vector<Function> functions_ = { { /* main */ } };
 };
 
 }
