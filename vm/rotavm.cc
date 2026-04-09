@@ -15,13 +15,14 @@ namespace rotavm {
 void RotaVM::run_until_halt()
 {
     for (;;) {
-        if (executable_.at(PC_) == (uint8_t) OpCode::Halt)
+        if (!step())
             return;
-        step();
     }
 }
 
-inline void RotaVM::step()
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "ArgumentSelectionDefects"
+inline bool RotaVM::step()
 {
     auto pop2 = [this]() -> std::pair<Value, Value> {
         Value a = pop();
@@ -29,13 +30,13 @@ inline void RotaVM::step()
         return { a, b };
     };
 
-    switch ((OpCode) executable_.at(PC_)) {
+    Executable::Token token = exec_.token(current_function_, PC_);
+
+    switch (token.opcode) {
         case OpCode::Nop:
             break;
         case OpCode::Push: {
-            auto [v, sz] = value_at(PC_ + 1);
-            push(std::move(v));
-            PC_ += sz;
+            push(*token.p1);
             break;
         }
         case OpCode::Pop:
@@ -43,94 +44,114 @@ inline void RotaVM::step()
             break;
         case OpCode::Sum: {
             auto [a, b] = pop2();
-            push(b + a);
+            push(op_table.execute(BinaryOp::Plus, b, a));
             break;
         }
         case OpCode::Subtract: {
             auto [a, b] = pop2();
-            push(b - a);
+            push(op_table.execute(BinaryOp::Subtract, b, a));
             break;
         }
         case OpCode::Multiply: {
             auto [a, b] = pop2();
-            push(b * a);
+            push(op_table.execute(BinaryOp::Multiply, b, a));
             break;
         }
         case OpCode::Divide: {
             auto [a, b] = pop2();
-            push(b / a);
+            push(op_table.execute(BinaryOp::Divide, b, a));
             break;
         }
         case OpCode::IntDivide: {
             auto [a, b] = pop2();
-            push(b.int_divide(a));
+            push(op_table.execute(BinaryOp::IntDivide, b, a));
             break;
         }
         case OpCode::Modulo: {
             auto [a, b] = pop2();
-            push(b % a);
+            push(op_table.execute(BinaryOp::Modulo, b, a));
             break;
         }
         case OpCode::Power: {
             auto [a, b] = pop2();
-            push(b ^ a);
+            push(op_table.execute(BinaryOp::Power, b, a));
             break;
         }
         case OpCode::Equals: {
             auto [a, b] = pop2();
-            push(b == a);
+            push(op_table.execute(BinaryOp::Equals, b, a));
             break;
         }
         case OpCode::NotEqual: {
             auto [a, b] = pop2();
-            push(b != a);
+            push((bool) !op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::GreaterThan: {
             auto [a, b] = pop2();
-            push(b > a);
+            push(op_table.execute(BinaryOp::GreaterThan, b, a));
             break;
         }
         case OpCode::LessThan: {
             auto [a, b] = pop2();
-            push(b < a);
+            push(op_table.execute(BinaryOp::LessThan, b, a));
             break;
         }
         case OpCode::GreaterThanOrEqual: {
             auto [a, b] = pop2();
-            push(b >= a);
+            push(op_table.execute(BinaryOp::GreaterThan, b, a).i() || op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::LessThanOrEqual: {
             auto [a, b] = pop2();
-            push(b <= a);
+            push(op_table.execute(BinaryOp::LessThan, b, a).i() || op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::And: {
             auto [a, b] = pop2();
-            push(b && a);
+            push(op_table.execute(BinaryOp::And, b, a));
             break;
         }
         case OpCode::Or: {
             auto [a, b] = pop2();
-            push(b || a);
+            push(op_table.execute(BinaryOp::Or, b, a));
             break;
         }
         case OpCode::Not:
-            push(!pop());
+            push(op_table.execute(UnaryOp::Not, pop()));
             break;
+        case OpCode::Call: {
+            call_stack_.push({ current_function_, PC_ + 1 });
+            PC_ = 0;
+            Value v = pop();
+            if (v.type() != T_FUNCTION)
+                throw std::runtime_error("Can't call non-function value");
+            current_function_ = v.functionId();
+            return true;
+        }
+        case OpCode::Return: {
+            auto el = call_stack_.top();
+            current_function_ = el.f_id;
+            PC_ = el.PC;
+            call_stack_.pop();
+            return true;
+        }
+        case OpCode::Halt:
+            return false;
         default:
             throw RotaInvalidOpcodeError();
     }
 
     ++PC_;
+    return true;
 }
+#pragma clang diagnostic pop
 
 //
 // STACK MANIPULATION
 //
 
-void RotaVM::push(Value&& value)
+void RotaVM::push(Value const& value)
 {
     if (stack_idx_ == STACK_SZ)
         throw RotaStackOverflowError();
@@ -147,75 +168,19 @@ Value RotaVM::pop()
     return v;
 }
 
+Value RotaVM::peek()
+{
+    if (stack_idx_ == 0)
+        throw RotaStackUndeflowError();
+    return stack_[stack_idx_ - 1];
+}
+
 std::string RotaVM::debug_stack() const
 {
     std::string ret;
     for (size_t i = 0; i < stack_idx_; ++i)
         ret += "[" + stack_[i].debug() + "] ";
     return ret;
-}
-
-std::string RotaVM::debug_executable() const
-{
-    size_t p = 0;
-    std::string out;
-
-    while (p < executable_.size()) {
-        switch ((OpCode) executable_.at(p)) {
-            case OpCode::Nop: out += "\tNOP\n"; break;
-            case OpCode::Push: {
-                auto [v, sz] = value_at(p + 1);
-                out += "\tPUSH " + v.debug() + "\n";
-                p += sz;
-                break;
-            }
-            case OpCode::Pop: out += "\tPOP\n"; break;
-            case OpCode::Sum: out += "\tSUM\n"; break;
-            case OpCode::Subtract: out += "\tSUB\n"; break;
-            case OpCode::Multiply: out += "\tMUL\n"; break;
-            case OpCode::Divide: out += "\tDIV\n"; break;
-            case OpCode::IntDivide: out += "\tIDIV\n"; break;
-            case OpCode::Modulo: out += "\tMOD\n"; break;
-            case OpCode::Power: out += "\tPOW\n"; break;
-            case OpCode::Equals: out += "\tEQ\n"; break;
-            case OpCode::NotEqual: out += "\tNEQ\n"; break;
-            case OpCode::GreaterThan: out += "\tGT\n"; break;
-            case OpCode::LessThan: out += "\tLT\n"; break;
-            case OpCode::GreaterThanOrEqual: out += "\tGTE\n"; break;
-            case OpCode::LessThanOrEqual: out += "\tLTE\n"; break;
-            case OpCode::And: out += "\tAND\n"; break;
-            case OpCode::Or: out += "\tOR\n"; break;
-            case OpCode::Not: out += "\tNOT\n"; break;
-            case OpCode::Halt: out += "\tHALT\n"; break;
-        }
-
-        ++p;
-    }
-
-    return out;
-}
-
-std::string RotaVM::debug_executable_memory() const
-{
-    std::string out;
-
-    for (auto b: executable_) {
-        char buf[4];
-        sprintf(buf, "%02X ", b);
-        out += buf;
-    }
-
-    return out;
-}
-
-std::pair<Value, size_t> RotaVM::value_at(size_t pc) const
-{
-    return Value::from_bytes(&executable_.at(pc), executable_.size() - pc);
-}
-
-void RotaVM::set_executable_memory(std::vector<uint8_t> const& data, bool add_halt)
-{
-    executable_ = data;
 }
 
 }

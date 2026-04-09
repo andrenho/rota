@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -10,90 +11,50 @@
 
 namespace rotavm {
 
+using FunctionId = size_t;
+
+struct Function {
+    explicit Function(FunctionId id) : id(id) {}
+
+    FunctionId id;
+
+    bool operator==(Function const& rhs) const {
+        return id == rhs.id;
+    }
+};
+
 class Value {
 public:
     Value() : type_(T_NIL), i_(0) {}
+    explicit Value(bool b) : type_(T_INT), i_(b ? -1 : 0) {}
     explicit Value(int32_t i) : type_(T_INT), i_(i) {}
     explicit Value(float f) : type_(T_FLOAT), f_(f) {}
-
-    [[nodiscard]] bool operator==(Value const& other) const;
-    [[nodiscard]] bool operator!=(Value const& other) const;
-    [[nodiscard]] bool operator<(Value const& other) const;
-    [[nodiscard]] bool operator>(Value const& other) const;
-    [[nodiscard]] bool operator<=(Value const& other) const;
-    [[nodiscard]] bool operator>=(Value const& other) const;
-
-    [[nodiscard]] Value operator+(Value const& other) const;
-    [[nodiscard]] Value operator-(Value const& other) const;
-    [[nodiscard]] Value operator*(Value const& other) const;
-    [[nodiscard]] Value operator/(Value const& other) const;
-    [[nodiscard]] Value operator%(Value const& other) const;
-    [[nodiscard]] Value operator^(Value const& other) const;
-    [[nodiscard]] Value int_divide(Value const& other) const;
-
-    [[nodiscard]] bool operator&&(Value const& other) const;
-    [[nodiscard]] bool operator||(Value const& other) const;
-
-    [[nodiscard]] bool operator!() const;
+    explicit Value(Function const& fn) : type_(T_FUNCTION), fn_(fn) {}
 
     [[nodiscard]] Type  type() const { return type_; }
     [[nodiscard]] int   i() const { return i_; }
     [[nodiscard]] float f() const { return f_; }
+    [[nodiscard]] float functionId() const { return fn_.id; }
 
-    [[nodiscard]] std::string debug() const;
-
-    std::vector<uint8_t> to_bytes() const;
-    static std::pair<Value, size_t> from_bytes(uint8_t const* data, size_t max_bytes);
+    [[nodiscard]] std::string debug() const
+    {
+        switch (type_) {
+            case T_NIL: return "nil";
+            case T_INT: return std::to_string(i_);
+            case T_FLOAT: return std::to_string(f_);
+            case T_FUNCTION: return "fn(" + std::to_string(fn_.id) + ")";
+            default: throw std::runtime_error("not implemented");
+        }
+    }
 
 private:
     Type type_;
     union {
-        int32_t i_;
-        float   f_;
+        int32_t  i_;
+        float    f_;
+        Function fn_;
     };
-
-    static class OpTable const& op_table;
 };
-
-/*
-class ValueInt;
-class ValueFloat;
-
-class ValueInt {
-public:
-    ValueInt() : value_(0) {}
-    explicit ValueInt(int v) : value_(v) {}
-
-    auto operator<=>(ValueInt const& i) const = default;
-    std::strong_ordering operator<=>(ValueFloat const& f);
-
-    ValueInt operator+(ValueInt const& i) const;
-    ValueFloat operator+(ValueFloat const& f) const;
-
-private:
-    int value_;
-};
-
-class ValueFloat {
-public:
-    ValueFloat() : value_(0.f) {}
-    explicit ValueFloat(float f) : value_(f) {}
-
-    std::strong_ordering operator<=>(ValueInt const& i);
-    auto operator<=>(ValueFloat const& f) const = default;
-
-    ValueFloat operator+(ValueFloat const& f) const;
-    ValueFloat operator+(ValueInt const& i) const;
-
-private:
-    float value_;
-};
-
-using Value = std::variant<ValueInt, ValueFloat>;
-
-int   to_int(Value const& v);
-float to_float(Value const& v);
- */
 
 }
 

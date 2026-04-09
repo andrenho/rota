@@ -5,7 +5,7 @@
 
 namespace rotavm {
 
-enum Type : size_t { T_NIL, T_INT, T_FLOAT, T_COUNT };
+enum Type : size_t { T_NIL, T_INT, T_FLOAT, T_FUNCTION, T_COUNT };
 
 }
 

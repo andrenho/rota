@@ -9,6 +9,8 @@
 #include <variant>
 
 #include "value.hh"
+#include "vm/compiler/compiler.hh"
+#include "optable.hh"
 
 #define STACK_SZ 512
 
@@ -17,31 +19,37 @@ namespace rotavm {
 class RotaVM {
 public:
     // execution
-    void set_executable_memory(std::vector<uint8_t> const& data, bool add_halt);
+    void set_executable(Executable const& exec) { exec_ = exec; }
     void run_until_halt();
 
     // debug
     [[nodiscard]] Value const& last_value() const { return last_value_; }
     [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }
     [[nodiscard]] std::string  debug_stack() const;
-    [[nodiscard]] std::string  debug_executable() const;
-    [[nodiscard]] std::string  debug_executable_memory() const;
 
 private:
     std::array<Value, STACK_SZ> stack_ {};
     size_t                      stack_idx_ = 0;
-    std::vector<uint8_t>        executable_;
+    Executable                  exec_;
+    FunctionId                  current_function_ = 0;
     Value                       last_value_;
     uint32_t                    PC_ = 0;
 
-    void step();
+    struct CallStackElement {
+        FunctionId f_id;
+        uint32_t   PC;
+    };
+    std::stack<CallStackElement> call_stack_;
 
-    [[nodiscard]] std::pair<Value, size_t> value_at(size_t pc) const;
+    const OpTable op_table;
+
+    bool step();
 
     // stack manipulation
-    void         push(Value&& value);   // +1
+    void         push(Value const& value);
     void         push(bool v) { push(Value(v ? -1 : 0)); }
-    Value        pop();                 // -1
+    Value        pop();
+    Value        peek();
 };
 
 }

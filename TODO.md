@@ -68,12 +68,18 @@ Things included in the VM:
   - [x] Equality
   - [x] Logical
     - [x] Not
-- [ ] Nil
-- [ ] Multiple expressions
+- [x] Nil
+- [x] Multiple expressions
+- [x] Functions
+  - [x] New output format
+  - [x] Reorganize code
+  - [x] Executable smaller, pair opcode with argument
+  - [x] Basic function call
 - [ ] Local variables
   - [ ] Multiple memories
+  - [ ] Function parameters
+  - [ ] Call function with parameters
 - [ ] Control flow
-- [ ] Functions
 - [ ] Strings
   - [ ] Fixed strings
 - [ ] Bitwise operators (maybe byte type?)
