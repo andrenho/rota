@@ -123,7 +123,7 @@ inline bool RotaVM::step()
         case OpCode::Call: {
             call_stack_.push({ current_function_, PC_ + 1 });
             PC_ = 0;
-            Value v = peek();
+            Value v = pop();
             if (v.type() != T_FUNCTION)
                 throw std::runtime_error("Can't call non-function value");
             current_function_ = v.functionId();
