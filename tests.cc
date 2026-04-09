@@ -14,14 +14,11 @@ static void test(std::string const& code, T const& v_expected)
 
     rotavm::RotaVM vm;
     try {
-        vm.set_executable(rotavm::compile(code));
+        auto executable = rotavm::compile(code);
+        vm.set_executable(executable);
 
-        /*
-        if (debug) {
-            printf("%s\n", vm.debug_executable_memory().c_str());
-            printf("%s\n", vm.debug_executable().c_str());
-        }
-         */
+        if (debug)
+            printf("%s\n", executable.debug().c_str());
 
         vm.run_until_halt();
 

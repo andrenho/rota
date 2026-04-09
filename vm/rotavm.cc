@@ -31,15 +31,12 @@ inline bool RotaVM::step()
     };
 
     Executable::Token token = exec_.token(current_function_, PC_);
-    if (!std::holds_alternative<OpCode>(token))
-        throw RotaInvalidOpcodeError();
 
-    switch (std::get<OpCode>(token)) {
+    switch (token.opcode) {
         case OpCode::Nop:
             break;
         case OpCode::Push: {
-            Value v = std::get<Value>(exec_.token(current_function_, PC_ + 1));
-            push(std::move(v));
+            push(*token.p1);
             ++PC_;
             break;
         }

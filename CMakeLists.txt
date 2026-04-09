@@ -34,7 +34,9 @@ set(VM_SRC
         vm/type.hh
         vm/opcode.hh
         vm/compiler/compiler.hh
-        vm/compiler/compiler.cc)
+        vm/compiler/compiler.cc
+        vm/executable.cc
+        vm/executable.hh)
 
 add_executable(rota-vm-test
         tests.cc

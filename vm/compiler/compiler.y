@@ -40,39 +40,39 @@ void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s);
 
 %%
 
-program: expressions    { exec << OpCode::Halt; }
+program: expressions    { exec.add(OpCode::Halt); }
        ;
 
 expressions: expressions expression
            | expression
            ;
 
-expression: expr ';'          { exec << OpCode::Pop; }
+expression: expr ';'          { exec.add(OpCode::Pop); }
           | RETURN expr ';'
           ;
 
 expr: function_def
     | function_call
-    | '!' expr          { exec << OpCode::Not; }
-    | expr '+' expr     { exec << OpCode::Sum; }
-    | expr '-' expr     { exec << OpCode::Subtract; }
-    | expr '*' expr     { exec << OpCode::Multiply; }
-    | expr '/' expr     { exec << OpCode::Divide; }
-    | expr '%' expr     { exec << OpCode::Modulo; }
-    | expr '^' expr     { exec << OpCode::Power; }
-    | expr DSLASH expr  { exec << OpCode::IntDivide; }
-    | expr EQ expr      { exec << OpCode::Equals; }
-    | expr NEQ expr     { exec << OpCode::NotEqual; }
-    | expr '>' expr     { exec << OpCode::GreaterThan; }
-    | expr '<' expr     { exec << OpCode::LessThan; }
-    | expr GT_EQ expr   { exec << OpCode::GreaterThanOrEqual; }
-    | expr LT_EQ expr   { exec << OpCode::LessThanOrEqual; }
-    | expr AND expr     { exec << OpCode::And; }
-    | expr OR expr      { exec << OpCode::Or; }
+    | '!' expr          { exec.add(OpCode::Not); }
+    | expr '+' expr     { exec.add(OpCode::Sum); }
+    | expr '-' expr     { exec.add(OpCode::Subtract); }
+    | expr '*' expr     { exec.add(OpCode::Multiply); }
+    | expr '/' expr     { exec.add(OpCode::Divide); }
+    | expr '%' expr     { exec.add(OpCode::Modulo); }
+    | expr '^' expr     { exec.add(OpCode::Power); }
+    | expr DSLASH expr  { exec.add(OpCode::IntDivide); }
+    | expr EQ expr      { exec.add(OpCode::Equals); }
+    | expr NEQ expr     { exec.add(OpCode::NotEqual); }
+    | expr '>' expr     { exec.add(OpCode::GreaterThan); }
+    | expr '<' expr     { exec.add(OpCode::LessThan); }
+    | expr GT_EQ expr   { exec.add(OpCode::GreaterThanOrEqual); }
+    | expr LT_EQ expr   { exec.add(OpCode::LessThanOrEqual); }
+    | expr AND expr     { exec.add(OpCode::And); }
+    | expr OR expr      { exec.add(OpCode::Or); }
     | '(' expr ')'
-    | INTEGER           { exec << OpCode::Push << Value($1); }
-    | FLOAT             { exec << OpCode::Push << Value($1); }
-    | NIL               { exec << OpCode::Push << Value(); }
+    | INTEGER           { exec.add(OpCode::Push, Value($1)); }
+    | FLOAT             { exec.add(OpCode::Push, Value($1)); }
+    | NIL               { exec.add(OpCode::Push, Value()); }
     ;
 
 function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
