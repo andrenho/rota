@@ -32,6 +32,14 @@ void Executable::end_function()
     // TODO
 }
 
+std::string Executable::debug() const
+{
+    std::string out;
+
+    // TODO
+
+    return out;
+}
 
 /*
 rotavm::ExecutableFunction& ExecutableFunction::operator<<(rotavm::OpCode opcode)

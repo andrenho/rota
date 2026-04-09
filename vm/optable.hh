@@ -22,20 +22,18 @@ enum class BinaryOp : size_t {
     COUNT
 };
 
-using OpRet = std::variant<Value, bool>;
-
 class OpTable {
 public:
     OpTable();
 
-    [[nodiscard]] OpRet execute(BinaryOp op, Value const& a, Value const& b) const;
-    [[nodiscard]] OpRet execute(UnaryOp op, Value const& a) const;
+    [[nodiscard]] Value execute(BinaryOp op, Value const& a, Value const& b) const;
+    [[nodiscard]] Value execute(UnaryOp op, Value const& a) const;
 
 private:
-    using BinaryOpFunc = std::function<OpRet(Value const&, Value const&)>;
+    using BinaryOpFunc = std::function<Value(Value const&, Value const&)>;
     BinaryOpFunc binary_op_[(size_t) BinaryOp::COUNT][T_COUNT][T_COUNT];
 
-    using UnaryOpFunc = std::function<OpRet(Value const&)>;
+    using UnaryOpFunc = std::function<Value(Value const&)>;
     UnaryOpFunc unary_op_[(size_t) UnaryOp::COUNT][T_COUNT];
 };
 

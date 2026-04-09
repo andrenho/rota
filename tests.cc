@@ -25,7 +25,8 @@ static void test(std::string const& code, T const& v_expected)
 
         vm.run_until_halt();
 
-        if (vm.last_value() != expected) {
+        rotavm::Value v = vm.last_value(), e = expected;
+        if (v.type() != e.type() || (v.i() != e.i() && v.f() != e.f())) {
             char buf[255]; snprintf(buf, sizeof(buf), "Expected: %s, found %s", expected.debug().c_str(),
                     vm.last_value().debug().c_str());
             throw std::runtime_error(buf);

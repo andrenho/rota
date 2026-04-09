@@ -10,6 +10,7 @@
 
 #include "value.hh"
 #include "vm/compiler/compiler.hh"
+#include "optable.hh"
 
 #define STACK_SZ 512
 
@@ -33,6 +34,7 @@ private:
     FunctionId                  current_function_ = 0;
     Value                       last_value_;
     uint32_t                    PC_ = 0;
+    OpTable                     op_table;
 
     bool step();
 

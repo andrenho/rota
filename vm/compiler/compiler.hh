@@ -15,6 +15,7 @@ public:
     using Token = std::variant<rotavm::OpCode, rotavm::Value>;
 
     struct Function {
+        std::string        name;
         std::vector<Token> tokens;
     };
 
@@ -25,9 +26,11 @@ public:
 
     [[nodiscard]] Token token(FunctionId f_id, size_t pos) const { return functions_.at(f_id).tokens.at(pos); }
 
+    [[nodiscard]] std::string debug() const;
+
 private:
     size_t current_function_ = 0;
-    std::vector<Function> functions_ = { { /* main */ } };
+    std::vector<Function> functions_ = { { .name = "#main", .tokens = {} } };
 };
 
 

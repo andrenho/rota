@@ -14,6 +14,32 @@ enum class OpCode : uint8_t {
     Halt   = 0xff,
 };
 
+inline const char* opcode_name(OpCode opcode) {
+    switch (opcode) {
+        case OpCode::Nop:       return "NOP";
+        case OpCode::Push:      return "PUSH";
+        case OpCode::Pop:       return "POP";
+        case OpCode::Sum:       return "SUM";
+        case OpCode::Subtract:  return "SUB";
+        case OpCode::Multiply:  return "MUL";
+        case OpCode::Divide:    return "DIV";
+        case OpCode::IntDivide: return "IDIV";
+        case OpCode::Modulo:    return "MOD";
+        case OpCode::Power:     return "POW";
+        case OpCode::Equals:    return "EQ";
+        case OpCode::NotEqual:  return "NEQ";
+        case OpCode::GreaterThan: return "GT";
+        case OpCode::LessThan:  return "LT";
+        case OpCode::GreaterThanOrEqual: return "GTE";
+        case OpCode::LessThanOrEqual:    return "LTE";
+        case OpCode::And:       return "AND";
+        case OpCode::Or:        return "OR";
+        case OpCode::Not:       return "NOT";
+        case OpCode::Halt:      return "HALT";
+    }
+    return "???";
+}
+
 }
 
 #endif //ROTA_OPCODE_HH

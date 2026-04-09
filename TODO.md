@@ -71,7 +71,9 @@ Things included in the VM:
 - [x] Nil
 - [x] Multiple expressions
 - [ ] Functions
-  - [ ] New output format
+  - [x] New output format
+  - [ ] Reorganize code
+  - [ ] Executable smaller, pair opcode with argument
 - [ ] Local variables
   - [ ] Multiple memories
 - [ ] Control flow

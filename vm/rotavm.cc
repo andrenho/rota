@@ -20,6 +20,8 @@ void RotaVM::run_until_halt()
     }
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "ArgumentSelectionDefects"
 inline bool RotaVM::step()
 {
     auto pop2 = [this]() -> std::pair<Value, Value> {
@@ -46,81 +48,81 @@ inline bool RotaVM::step()
             break;
         case OpCode::Sum: {
             auto [a, b] = pop2();
-            push(b + a);
+            push(op_table.execute(BinaryOp::Plus, b, a));
             break;
         }
         case OpCode::Subtract: {
             auto [a, b] = pop2();
-            push(b - a);
+            push(op_table.execute(BinaryOp::Subtract, b, a));
             break;
         }
         case OpCode::Multiply: {
             auto [a, b] = pop2();
-            push(b * a);
+            push(op_table.execute(BinaryOp::Multiply, b, a));
             break;
         }
         case OpCode::Divide: {
             auto [a, b] = pop2();
-            push(b / a);
+            push(op_table.execute(BinaryOp::Divide, b, a));
             break;
         }
         case OpCode::IntDivide: {
             auto [a, b] = pop2();
-            push(b.int_divide(a));
+            push(op_table.execute(BinaryOp::IntDivide, b, a));
             break;
         }
         case OpCode::Modulo: {
             auto [a, b] = pop2();
-            push(b % a);
+            push(op_table.execute(BinaryOp::Modulo, b, a));
             break;
         }
         case OpCode::Power: {
             auto [a, b] = pop2();
-            push(b ^ a);
+            push(op_table.execute(BinaryOp::Power, b, a));
             break;
         }
         case OpCode::Equals: {
             auto [a, b] = pop2();
-            push(b == a);
+            push(op_table.execute(BinaryOp::Equals, b, a));
             break;
         }
         case OpCode::NotEqual: {
             auto [a, b] = pop2();
-            push(b != a);
+            push((bool) !op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::GreaterThan: {
             auto [a, b] = pop2();
-            push(b > a);
+            push(op_table.execute(BinaryOp::GreaterThan, b, a));
             break;
         }
         case OpCode::LessThan: {
             auto [a, b] = pop2();
-            push(b < a);
+            push(op_table.execute(BinaryOp::LessThan, b, a));
             break;
         }
         case OpCode::GreaterThanOrEqual: {
             auto [a, b] = pop2();
-            push(b >= a);
+            push(op_table.execute(BinaryOp::GreaterThan, b, a).i() || op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::LessThanOrEqual: {
             auto [a, b] = pop2();
-            push(b <= a);
+            push(op_table.execute(BinaryOp::LessThan, b, a).i() || op_table.execute(BinaryOp::Equals, b, a).i());
             break;
         }
         case OpCode::And: {
             auto [a, b] = pop2();
-            push(b && a);
+            push(op_table.execute(BinaryOp::And, b, a));
             break;
         }
         case OpCode::Or: {
             auto [a, b] = pop2();
-            push(b || a);
+            push(op_table.execute(BinaryOp::Or, b, a));
             break;
         }
         case OpCode::Not:
-            push(!pop());
+            push(op_table.execute(UnaryOp::Not, pop()));
             break;
         case OpCode::Halt:
             return false;
@@ -131,6 +133,7 @@ inline bool RotaVM::step()
     ++PC_;
     return true;
 }
+#pragma clang diagnostic pop
 
 //
 // STACK MANIPULATION
