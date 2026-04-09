@@ -34,14 +34,22 @@ private:
     FunctionId                  current_function_ = 0;
     Value                       last_value_;
     uint32_t                    PC_ = 0;
-    OpTable                     op_table;
+
+    struct CallStackElement {
+        FunctionId f_id;
+        uint32_t   PC;
+    };
+    std::stack<CallStackElement> call_stack_;
+
+    const OpTable op_table;
 
     bool step();
 
     // stack manipulation
-    void         push(Value const& value);   // +1
+    void         push(Value const& value);
     void         push(bool v) { push(Value(v ? -1 : 0)); }
-    Value        pop();                 // -1
+    Value        pop();
+    Value        peek();
 };
 
 }

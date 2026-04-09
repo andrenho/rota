@@ -120,6 +120,22 @@ inline bool RotaVM::step()
         case OpCode::Not:
             push(op_table.execute(UnaryOp::Not, pop()));
             break;
+        case OpCode::Call: {
+            call_stack_.push({ current_function_, PC_ + 1 });
+            PC_ = 0;
+            Value v = peek();
+            if (v.type() != T_FUNCTION)
+                throw std::runtime_error("Can't call non-function value");
+            current_function_ = v.functionId();
+            return true;
+        }
+        case OpCode::Return: {
+            auto el = call_stack_.top();
+            current_function_ = el.f_id;
+            PC_ = el.PC;
+            call_stack_.pop();
+            return true;
+        }
         case OpCode::Halt:
             return false;
         default:
@@ -150,6 +166,13 @@ Value RotaVM::pop()
     if (stack_idx_ == 0)
         last_value_ = v;
     return v;
+}
+
+Value RotaVM::peek()
+{
+    if (stack_idx_ == 0)
+        throw RotaStackUndeflowError();
+    return stack_[stack_idx_ - 1];
 }
 
 std::string RotaVM::debug_stack() const

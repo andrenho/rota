@@ -34,6 +34,7 @@ public:
     [[nodiscard]] Type  type() const { return type_; }
     [[nodiscard]] int   i() const { return i_; }
     [[nodiscard]] float f() const { return f_; }
+    [[nodiscard]] float functionId() const { return fn_.id; }
 
     [[nodiscard]] std::string debug() const
     {
