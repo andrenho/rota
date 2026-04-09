@@ -31,6 +31,9 @@ public:
     void add_function();
     void end_function();
 
+    void assignment(std::string const& identifier);
+    void load_identifier(std::string const& identifier);
+
     [[nodiscard]] Token token(FunctionId f_id, size_t pos) const { return functions_.at(f_id).tokens.at(pos); }
 
     [[nodiscard]] std::string debug() const;

@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
 
     // arithmetic
 
-    /*
     test("500;", 500);
     test("500 + 30;", 530);
     test("1.2f + 4;", 5.2f);
@@ -99,9 +98,12 @@ int main(int argc, char* argv[])
     // multiple expressions
 
     test("42; 3 + 4;", 7);
-     */
 
     // functions
 
     test("func() {\n return 42;\n }();\n", 42);
+
+    // local variables
+
+    test("a = 42; a;", 42);
 }

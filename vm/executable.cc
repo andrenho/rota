@@ -43,4 +43,14 @@ std::string Executable::debug() const
     return out;
 }
 
+void Executable::assignment(std::string const& identifier)
+{
+
+}
+
+void Executable::load_identifier(std::string const& identifier)
+{
+
+}
+
 }
