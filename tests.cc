@@ -106,4 +106,6 @@ int main(int argc, char* argv[])
     // local variables
 
     test("a = 42; a;", 42);
+    test("a = 42; b = 12; a;", 42);
+    test("a = 42; b = 12; b;", 12);
 }
