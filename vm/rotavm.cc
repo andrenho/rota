@@ -140,12 +140,15 @@ inline bool RotaVM::step()
             pop_scope();
             call_stack_.pop();
             return true;
-        /*
-        case OpCode::StoreLocal:
+        case OpCode::StoreLocal: {
+            // TODO - check fp
+            locals_vars_.push_back(pop());
             break;
+        }
         case OpCode::LoadLocal:
+            // TODO - check fp
+            push(locals_vars_.at(token.p1->i()));
             break;
-        */
         case OpCode::Halt:
             return false;
         default:
@@ -159,12 +162,13 @@ inline bool RotaVM::step()
 
 void RotaVM::push_scope()
 {
-    // fp_local_vars_.push(0);
+    fp_local_vars_.push(0);
 }
 
 void RotaVM::pop_scope()
 {
-    // fp_local_vars_.pop();
+    // TODO - remove variables from scope
+    fp_local_vars_.pop();
 }
 
 //
