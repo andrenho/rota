@@ -7,9 +7,9 @@ void Executable::add(OpCode opcode)
     functions_.at(current_function_).tokens.emplace_back(opcode);
 }
 
-void Executable::add(OpCode opcode, Value const& p1)
+void Executable::add(OpCode opcode, Value const& p1, std::optional<std::string> const& var_name)
 {
-    functions_.at(current_function_).tokens.emplace_back(opcode, p1);
+    functions_.at(current_function_).tokens.emplace_back(opcode, p1, var_name);
 }
 
 void Executable::add_function()
@@ -26,6 +26,35 @@ void Executable::end_function()
     current_function_ = 0;
 }
 
+void Executable::assignment(std::string const& identifier)
+{
+    size_t var_idx;
+
+    auto& f = functions_.at(current_function_);
+    auto it = f.var_idx.find(identifier);
+    if (it != f.var_idx.end()) {
+        // assignment of an existing variable
+        var_idx = it->second;
+    } else {
+        // assignment of a new variable
+        var_idx = f.var_count++;
+        f.var_idx[identifier] = var_idx;
+    }
+
+    add(OpCode::StoreLocal, Value((int) var_idx), identifier);
+}
+
+void Executable::load_identifier(std::string const& identifier)
+{
+    auto& f = functions_.at(current_function_);
+    auto it = f.var_idx.find(identifier);
+    if (it != f.var_idx.end()) {
+        add(OpCode::PushLocal, Value((int) it->second), identifier);
+    } else {
+        throw std::runtime_error("Unknown identifier '" + identifier + "'");
+    }
+}
+
 std::string Executable::debug() const
 {
     std::string out;
@@ -36,21 +65,13 @@ std::string Executable::debug() const
             out += std::string("\t") + opcode_name(tok.opcode);
             if (tok.p1)
                 out += std::string(" ") + tok.p1->debug();
+            if (tok.variable_name)
+                out += std::string("  ; ") + *tok.variable_name;
             out += "\n";
         }
     }
 
     return out;
-}
-
-void Executable::assignment(std::string const& identifier)
-{
-
-}
-
-void Executable::load_identifier(std::string const& identifier)
-{
-
 }
 
 }

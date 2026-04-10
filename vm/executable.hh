@@ -16,17 +16,24 @@ public:
     struct Token {
         explicit Token(OpCode opcode) : opcode(opcode) {}
         Token(OpCode opcode, rotavm::Value const& p1) : opcode(opcode), p1(p1) {}
+        Token(OpCode opcode, rotavm::Value const& p1, std::optional<std::string> const& var_name)
+            : opcode(opcode), p1(p1), variable_name(var_name) {}
 
         OpCode opcode;
         std::optional<rotavm::Value> p1;
+
+        // debugging info
+        std::optional<std::string> variable_name;
     };
 
     struct Function {
-        std::vector<Token> tokens;
+        std::vector<Token> tokens {};
+        size_t             var_count = 0;
+        std::unordered_map<std::string, size_t> var_idx {};
     };
 
     void add(OpCode opcode);
-    void add(OpCode opcode, rotavm::Value const& p1);
+    void add(OpCode opcode, rotavm::Value const& p1, std::optional<std::string> const& var_name={});
 
     void add_function();
     void end_function();
