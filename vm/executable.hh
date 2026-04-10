@@ -27,8 +27,8 @@ public:
     };
 
     struct Function {
-        std::vector<Token> tokens {};
-        size_t             var_count = 0;
+        std::vector<Token>                      tokens {};
+        size_t                                  total_variables = 0;
         std::unordered_map<std::string, size_t> var_idx {};
     };
 

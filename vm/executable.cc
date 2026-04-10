@@ -37,7 +37,7 @@ void Executable::assignment(std::string const& identifier)
         var_idx = it->second;
     } else {
         // assignment of a new variable
-        var_idx = f.var_count++;
+        var_idx = f.total_variables++;
         f.var_idx[identifier] = var_idx;
     }
 
@@ -49,7 +49,7 @@ void Executable::load_identifier(std::string const& identifier)
     auto& f = functions_.at(current_function_);
     auto it = f.var_idx.find(identifier);
     if (it != f.var_idx.end()) {
-        add(OpCode::PushLocal, Value((int) it->second), identifier);
+        add(OpCode::LoadLocal, Value((int) it->second), identifier);
     } else {
         throw std::runtime_error("Unknown identifier '" + identifier + "'");
     }

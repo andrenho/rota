@@ -12,6 +12,13 @@ namespace rotavm {
 // EXECUTABLE
 //
 
+RotaVM::RotaVM()
+{
+    // fp_local_vars_.push(0);
+    call_stack_.push({ 0, 0 });
+}
+
+
 void RotaVM::run_until_halt()
 {
     for (;;) {
@@ -30,7 +37,7 @@ inline bool RotaVM::step()
         return { a, b };
     };
 
-    Executable::Token token = exec_.token(current_function_, PC_);
+    Executable::Token token = exec_.token(current_function(), addr());
 
     switch (token.opcode) {
         case OpCode::Nop:
@@ -121,28 +128,29 @@ inline bool RotaVM::step()
             push(op_table.execute(UnaryOp::Not, pop()));
             break;
         case OpCode::Call: {
-            call_stack_.push({ current_function_, PC_ + 1 });
-            PC_ = 0;
             Value v = pop();
             if (v.type() != T_FUNCTION)
                 throw std::runtime_error("Can't call non-function value");
-            current_function_ = v.functionId();
+            ++addr();
+            call_stack_.push({ .f_id = v.functionId(), .addr = 0 });
             return true;
         }
-        case OpCode::Return: {
-            auto el = call_stack_.top();
-            current_function_ = el.f_id;
-            PC_ = el.PC;
+        case OpCode::Return:
             call_stack_.pop();
             return true;
-        }
+        /*
+        case OpCode::StoreLocal:
+            break;
+        case OpCode::LoadLocal:
+            break;
+        */
         case OpCode::Halt:
             return false;
         default:
             throw RotaInvalidOpcodeError();
     }
 
-    ++PC_;
+    ++addr();
     return true;
 }
 #pragma clang diagnostic pop
@@ -153,33 +161,34 @@ inline bool RotaVM::step()
 
 void RotaVM::push(Value const& value)
 {
-    if (stack_idx_ == STACK_SZ)
+    if (stack_.size() == STACK_SZ)
         throw RotaStackOverflowError();
-    stack_[stack_idx_++] = value;
+    stack_.push_back(value);
 }
 
 Value RotaVM::pop()
 {
-    if (stack_idx_ == 0)
+    if (stack_.empty())
         throw RotaStackUndeflowError();
-    Value v = stack_[--stack_idx_];
-    if (stack_idx_ == 0)
+    Value v = stack_.back();
+    stack_.pop_back();
+    if (stack_.empty())
         last_value_ = v;
     return v;
 }
 
 Value RotaVM::peek()
 {
-    if (stack_idx_ == 0)
+    if (stack_.empty())
         throw RotaStackUndeflowError();
-    return stack_[stack_idx_ - 1];
+    return stack_.back();
 }
 
 std::string RotaVM::debug_stack() const
 {
     std::string ret;
-    for (size_t i = 0; i < stack_idx_; ++i)
-        ret += "[" + stack_[i].debug() + "] ";
+    for (auto const& value: stack_)
+        ret += "[" + value.debug() + "] ";
     return ret;
 }
 

@@ -36,7 +36,7 @@ Things included in the VM:
 
 ## Hardware
 
-- Version A - connects to a PC
+- Version A - connects to a addr
   - Pico Pi 2 W
     - 1 core running VM
   - SDCard
@@ -79,6 +79,7 @@ Things included in the VM:
   - [ ] Multiple memories
   - [ ] Function parameters
   - [ ] Call function with parameters
+- [ ] Scopes
 - [ ] Control flow
 - [ ] Strings
   - [ ] Fixed strings
@@ -87,6 +88,11 @@ Things included in the VM:
 - [ ] Globals
 - [ ] Error handling
 - [ ] Closures
+
+Memory/performance improvements
+- [ ] Compact executable class
+- [ ] Compact values (for variables)
+- [ ] Multiple pushes (for each type)
 
 # Phase 2 - serial prototype
 

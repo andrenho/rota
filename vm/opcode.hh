@@ -12,7 +12,7 @@ enum class OpCode : uint8_t {
     Equals     = 0x20, NotEqual  = 0x21, GreaterThan = 0x22, LessThan = 0x23, GreaterThanOrEqual = 0x24, LessThanOrEqual = 0x25,
     And        = 0x26, Or        = 0x27, Not         = 0x28,
     Return     = 0x30, Call      = 0x31,
-    StoreLocal = 0x40, PushLocal = 0x41,
+    StoreLocal = 0x40, LoadLocal = 0x41,
     Halt       = 0xff,
 };
 
@@ -40,7 +40,7 @@ inline const char* opcode_name(OpCode opcode) {
         case OpCode::Return:                return "RET";
         case OpCode::Call:                  return "CALL";
         case OpCode::StoreLocal:            return "STORL";
-        case OpCode::PushLocal:             return "PUSHL";
+        case OpCode::LoadLocal:             return "LOADL";
         case OpCode::Halt:                  return "HALT";
     }
     return "???";
