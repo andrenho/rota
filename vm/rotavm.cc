@@ -14,7 +14,7 @@ namespace rotavm {
 
 RotaVM::RotaVM()
 {
-    // fp_local_vars_.push(0);
+    push_scope();
     call_stack_.push({ 0, 0 });
 }
 
@@ -133,9 +133,11 @@ inline bool RotaVM::step()
                 throw std::runtime_error("Can't call non-function value");
             ++addr();
             call_stack_.push({ .f_id = v.functionId(), .addr = 0 });
+            push_scope();
             return true;
         }
         case OpCode::Return:
+            pop_scope();
             call_stack_.pop();
             return true;
         /*
@@ -154,6 +156,16 @@ inline bool RotaVM::step()
     return true;
 }
 #pragma clang diagnostic pop
+
+void RotaVM::push_scope()
+{
+    // fp_local_vars_.push(0);
+}
+
+void RotaVM::pop_scope()
+{
+    // fp_local_vars_.pop();
+}
 
 //
 // STACK MANIPULATION

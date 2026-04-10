@@ -50,6 +50,9 @@ private:
 
     bool step();
 
+    void push_scope();
+    void pop_scope();
+
     // stack manipulation
     void         push(Value const& value);
     void         push(bool v) { push(Value(v ? -1 : 0)); }
