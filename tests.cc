@@ -157,5 +157,5 @@ int main(int argc, char* argv[])
 
     // function parameters
 
-    // test("func(a) { return 10 + 1; }(12);", 13);
+    test("func(a) { return 10 + 1; }(12);", 13);
 }

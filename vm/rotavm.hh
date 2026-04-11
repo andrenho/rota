@@ -34,7 +34,6 @@ private:
     struct Address {
         FunctionId f_id;
         size_t     addr;
-        size_t     param_count;
     };
 
     Executable           exec_;              // executable code
@@ -50,7 +49,7 @@ private:
 
     bool step();
 
-    void enter_function(FunctionId f_id, size_t param_count);
+    void function_call(size_t param_count);
     void return_from_function();
 
     // stack manipulation

@@ -75,6 +75,11 @@ function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
               '}' { exec.end_function(); }
             ;
 
+parameters: parameters ',' expr { ++par_count; }
+          | expr                { ++par_count; }
+          |
+          ;
+
 expr: primary
     | '!' expr                  { exec.add(OpCode::Not); }
     | expr '+' expr             { exec.add(OpCode::Sum); }
@@ -93,11 +98,6 @@ expr: primary
     | expr AND expr             { exec.add(OpCode::And); }
     | expr OR expr              { exec.add(OpCode::Or); }
     ;
-
-parameters: parameters ',' expr { ++par_count; }
-          | expr                { ++par_count; }
-          |
-          ;
 
 function_parameters: function_parameters ',' IDENTIFIER
                    | IDENTIFIER
