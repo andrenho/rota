@@ -75,17 +75,19 @@ Things included in the VM:
   - [x] Reorganize code
   - [x] Executable smaller, pair opcode with argument
   - [x] Basic function call
-- [ ] Local variables
-  - [ ] Multiple memories
-  - [ ] Function parameters
-  - [ ] Call function with parameters
-- [ ] Scopes
-- [ ] Control flow
-- [ ] Strings
-  - [ ] Fixed strings
-- [ ] Bitwise operators (maybe byte type?)
-- [ ] Tables + GC
+- [x] Local variables
+  - [x] Multiple memories
+  - [x] Scopes
 - [ ] Globals
+- [ ] Function parameters
+  - [ ] Call function with parameters
+- [ ] Control flow
+  - [ ] Fixed strings
+- [ ] Strings
+- [ ] Tables + GC
+  - [ ] Metamethods (?)
+  - [ ] Arrays
+- [ ] Bitwise operators (maybe byte type?)
 - [ ] Error handling
 - [ ] Closures
 
