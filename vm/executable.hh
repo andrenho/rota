@@ -26,11 +26,14 @@ public:
         std::optional<std::string> variable_name;
     };
 
+    using VariableSet = std::unordered_map<std::string, size_t>;
+
     struct Function {
         std::vector<Token>                      tokens {};
         size_t                                  total_variables = 0;
-        std::unordered_map<std::string, size_t> var_idx {};
-        std::stack<size_t>                      var_idx_stack;
+        std::vector<VariableSet>                variables { {} };
+
+        [[nodiscard]] std::optional<size_t> find_variable(std::string const& name) const;
     };
 
     void add(OpCode opcode);

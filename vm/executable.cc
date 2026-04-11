@@ -1,3 +1,5 @@
+#include <ranges>
+
 #include "executable.hh"
 
 namespace rotavm {
@@ -16,7 +18,6 @@ void Executable::add_function()
 {
     functions_.at(current_function_).tokens.emplace_back(OpCode::Push, Value(rotavm::Function(current_function_ + 1)));
     auto it = functions_.emplace_back();
-    it.var_idx_stack.push(0);
     ++current_function_;
 }
 
@@ -29,25 +30,29 @@ void Executable::end_function()
 
 void Executable::push_scope()
 {
+    auto& f = functions_.at(current_function_);
+    f.variables.emplace_back();
 }
 
 void Executable::pop_scope()
 {
+    auto& f = functions_.at(current_function_);
+    f.variables.pop_back();
 }
 
 void Executable::assignment(std::string const& identifier)
 {
-    size_t var_idx;
-
     auto& f = functions_.at(current_function_);
-    auto it = f.var_idx.find(identifier);
-    if (it != f.var_idx.end()) {
+    auto var_found = f.find_variable(identifier);
+
+    size_t var_idx;
+    if (var_found) {
         // assignment of an existing variable
-        var_idx = it->second;
+        var_idx = *var_found;
     } else {
         // assignment of a new variable
         var_idx = f.total_variables++;
-        f.var_idx[identifier] = var_idx;
+        f.variables.back()[identifier] = var_idx;
     }
 
     add(OpCode::StoreLocal, Value((int) var_idx), identifier);
@@ -56,12 +61,11 @@ void Executable::assignment(std::string const& identifier)
 void Executable::load_identifier(std::string const& identifier)
 {
     auto& f = functions_.at(current_function_);
-    auto it = f.var_idx.find(identifier);
-    if (it != f.var_idx.end()) {
-        add(OpCode::LoadLocal, Value((int) it->second), identifier);
-    } else {
+    auto var_found = f.find_variable(identifier);
+    if (var_found)
+        add(OpCode::LoadLocal, Value((int) *var_found), identifier);
+    else
         throw std::runtime_error("Unknown identifier '" + identifier + "'");
-    }
 }
 
 std::string Executable::debug() const
@@ -81,6 +85,24 @@ std::string Executable::debug() const
     }
 
     return out;
+}
+
+//
+// FUNCTION
+//
+
+std::optional<size_t> Executable::Function::find_variable(std::string const& name) const
+{
+    // search variables in reverse scope
+
+    for (auto const& variable : std::ranges::reverse_view(variables)) {
+        for (auto const& [nm, pos] : variable) {
+            if (name == nm)
+                return pos;
+        }
+    }
+
+    return {};
 }
 
 }
