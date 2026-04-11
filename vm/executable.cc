@@ -26,6 +26,16 @@ void Executable::end_function()
     current_function_ = 0;
 }
 
+void Executable::push_scope()
+{
+
+}
+
+void Executable::pop_scope()
+{
+
+}
+
 void Executable::assignment(std::string const& identifier)
 {
     size_t var_idx;

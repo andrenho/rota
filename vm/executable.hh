@@ -38,6 +38,9 @@ public:
     void add_function();
     void end_function();
 
+    void push_scope();
+    void pop_scope();
+
     void assignment(std::string const& identifier);
     void load_identifier(std::string const& identifier);
 

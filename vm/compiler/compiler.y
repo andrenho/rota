@@ -49,9 +49,11 @@ expressions: expressions expression
            | expression
            ;
 
-expression: expr ';'                { exec.add(OpCode::Pop); }
+expression: '{' { exec.push_scope(); } expressions { exec.pop_scope(); } '}'
+          | expr ';'                { exec.add(OpCode::Pop); }
           | RETURN expr ';'         { exec.add(OpCode::Return); }
           | IDENTIFIER '=' expr ';' { exec.assignment($1); free($1); }
+          | ';'
           ;
 
 expr: function_def
