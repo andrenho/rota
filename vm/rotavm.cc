@@ -15,6 +15,7 @@ namespace rotavm {
 RotaVM::RotaVM()
 {
     call_stack_.push({ 0, 0 });
+    local_vars_fp_.push(0);
 }
 
 
@@ -136,17 +137,21 @@ inline bool RotaVM::step()
             Value v = pop();
             if (v.type() != T_FUNCTION)
                 throw std::runtime_error("Can't call non-function value");
-            enter_function(v.functionId());
+            enter_function(v.functionId(), token.p1->i());
             return true;
         }
         case OpCode::Return:
             return_from_function();
             return true;
-        case OpCode::StoreLocal:
-            locals_vars_.push_back(pop());
+        case OpCode::StoreLocal: {
+            size_t idx = local_vars_fp_.top() + token.p1->i();
+            if (idx >= locals_vars_.size())
+                locals_vars_.resize(idx + 1);
+            locals_vars_[idx]= pop();
             break;
+        }
         case OpCode::LoadLocal:
-            push(locals_vars_.at(token.p1->i()));
+            push(locals_vars_.at(local_vars_fp_.top() + token.p1->i()));
             break;
         case OpCode::StoreGlobal:
             global_vars_.at(token.p1->i()) = pop();
@@ -165,15 +170,16 @@ inline bool RotaVM::step()
 }
 #pragma clang diagnostic pop
 
-void RotaVM::enter_function(FunctionId f_id)
+void RotaVM::enter_function(FunctionId f_id, size_t param_count)
 {
     ++addr();
-    call_stack_.push({ .f_id = f_id, .addr = 0 });
+    local_vars_fp_.push(locals_vars_.size());
+    call_stack_.push({ .f_id = f_id, .addr = 0, .param_count = param_count });
 }
 
 void RotaVM::return_from_function()
 {
-    // TODO - remove variables from scope
+    local_vars_fp_.pop();
     call_stack_.pop();
 }
 

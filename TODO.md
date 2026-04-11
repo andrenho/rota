@@ -88,7 +88,8 @@ Things included in the VM:
   - [ ] Metamethods (?)
   - [ ] Arrays
 - [ ] Bitwise operators (maybe byte type?)
-- [ ] Error handling
+- [ ] Error handling (exception)
+  - [ ] Show error line when compilation error
 - [ ] Closures
 
 Debugger

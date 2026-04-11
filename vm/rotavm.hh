@@ -34,6 +34,7 @@ private:
     struct Address {
         FunctionId f_id;
         size_t     addr;
+        size_t     param_count;
     };
 
     Executable           exec_;              // executable code
@@ -41,6 +42,7 @@ private:
     std::stack<Address>  call_stack_;        // stack of calls
 
     std::vector<Value>   locals_vars_;       // stack of variables
+    std::stack<size_t>   local_vars_fp_;     //   - frame pointer
     std::vector<Value>   global_vars_;       // list of globals
 
     Value                last_value_;        // last pushed value (used only for debugging)
@@ -48,7 +50,7 @@ private:
 
     bool step();
 
-    void enter_function(FunctionId f_id);
+    void enter_function(FunctionId f_id, size_t param_count);
     void return_from_function();
 
     // stack manipulation

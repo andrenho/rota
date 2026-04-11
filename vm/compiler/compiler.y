@@ -25,6 +25,8 @@
 using namespace rotavm;
 
 void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s);
+
+size_t par_count = 0;
 %}
 
 %token AND OR NIL FUNC RETURN
@@ -52,35 +54,20 @@ expressions: expressions expression
 expression: '{' { exec.push_scope(); } expressions { exec.pop_scope(); } '}'
           | expr ';'                { exec.add(OpCode::Pop); }
           | RETURN expr ';'         { exec.add(OpCode::Return); }
-          | IDENTIFIER '=' expr ';' { exec.assignment($1); free($1); }
-          | GLOBAL '=' expr ';'     { exec.global_assignment($1); free($1); }
+          | IDENTIFIER '=' expr     { exec.assignment($1); free($1); }
+          | GLOBAL '=' expr         { exec.global_assignment($1); free($1); }
           | ';'
           ;
 
-expr: function_def
-    | '!' expr              { exec.add(OpCode::Not); }
-    | expr '+' expr         { exec.add(OpCode::Sum); }
-    | expr '-' expr         { exec.add(OpCode::Subtract); }
-    | expr '*' expr         { exec.add(OpCode::Multiply); }
-    | expr '/' expr         { exec.add(OpCode::Divide); }
-    | expr '%' expr         { exec.add(OpCode::Modulo); }
-    | expr '^' expr         { exec.add(OpCode::Power); }
-    | expr DSLASH expr      { exec.add(OpCode::IntDivide); }
-    | expr EQ expr          { exec.add(OpCode::Equals); }
-    | expr NEQ expr         { exec.add(OpCode::NotEqual); }
-    | expr '>' expr         { exec.add(OpCode::GreaterThan); }
-    | expr '<' expr         { exec.add(OpCode::LessThan); }
-    | expr GT_EQ expr       { exec.add(OpCode::GreaterThanOrEqual); }
-    | expr LT_EQ expr       { exec.add(OpCode::LessThanOrEqual); }
-    | expr AND expr         { exec.add(OpCode::And); }
-    | expr OR expr          { exec.add(OpCode::Or); }
+primary
+    : IDENTIFIER                    { exec.load_identifier($1); free($1); }
+    | GLOBAL                        { exec.load_global($1); free($1); }
+    | INTEGER                       { exec.add(OpCode::Push, Value($1)); }
+    | FLOAT                         { exec.add(OpCode::Push, Value($1)); }
+    | NIL                           { exec.add(OpCode::Push, Value()); }
+    | function_def
     | '(' expr ')'
-    | expr '(' ')'          { exec.add(OpCode::Call, Value(0)); }
-    | IDENTIFIER            { exec.load_identifier($1); free($1); }
-    | GLOBAL                { exec.load_global($1); free($1); }
-    | INTEGER               { exec.add(OpCode::Push, Value($1)); }
-    | FLOAT                 { exec.add(OpCode::Push, Value($1)); }
-    | NIL                   { exec.add(OpCode::Push, Value()); }
+    | primary '(' { par_count = 0; } parameters ')' { exec.add(OpCode::Call, Value((int)par_count)); }
     ;
 
 function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
@@ -88,7 +75,33 @@ function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
               '}' { exec.end_function(); }
             ;
 
-function_parameters:
+expr: primary
+    | '!' expr                  { exec.add(OpCode::Not); }
+    | expr '+' expr             { exec.add(OpCode::Sum); }
+    | expr '-' expr             { exec.add(OpCode::Subtract); }
+    | expr '*' expr             { exec.add(OpCode::Multiply); }
+    | expr '/' expr             { exec.add(OpCode::Divide); }
+    | expr '%' expr             { exec.add(OpCode::Modulo); }
+    | expr '^' expr             { exec.add(OpCode::Power); }
+    | expr DSLASH expr          { exec.add(OpCode::IntDivide); }
+    | expr EQ expr              { exec.add(OpCode::Equals); }
+    | expr NEQ expr             { exec.add(OpCode::NotEqual); }
+    | expr '>' expr             { exec.add(OpCode::GreaterThan); }
+    | expr '<' expr             { exec.add(OpCode::LessThan); }
+    | expr GT_EQ expr           { exec.add(OpCode::GreaterThanOrEqual); }
+    | expr LT_EQ expr           { exec.add(OpCode::LessThanOrEqual); }
+    | expr AND expr             { exec.add(OpCode::And); }
+    | expr OR expr              { exec.add(OpCode::Or); }
+    ;
+
+parameters: parameters ',' expr { ++par_count; }
+          | expr                { ++par_count; }
+          |
+          ;
+
+function_parameters: function_parameters ',' IDENTIFIER
+                   | IDENTIFIER
+                   |
                    ;
 
 %%
