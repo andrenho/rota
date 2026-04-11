@@ -146,7 +146,11 @@ int main(int argc, char* argv[])
     test_fail("func() {\n a = 42; return a;\n }(); a;\n");
     test("a = 12; func() {\n a = 42; return a;\n }(); a;\n", 12);
 
-    // global functions
+    // global variables
+
+    test("$a = 38; $a;", 38);
+    test("$a = 38; a = 4; $a;", 38);
+    test("{ $a = 44; } $a;", 44);
 
     // function parameters
 }

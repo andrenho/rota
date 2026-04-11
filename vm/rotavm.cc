@@ -26,6 +26,12 @@ void RotaVM::run_until_halt()
     }
 }
 
+void RotaVM::set_executable(Executable const& exec)
+{
+    exec_ = exec;
+    global_vars_.resize(exec_.number_of_globals());
+}
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "ArgumentSelectionDefects"
 inline bool RotaVM::step()
@@ -136,12 +142,17 @@ inline bool RotaVM::step()
         case OpCode::Return:
             return_from_function();
             return true;
-        case OpCode::StoreLocal: {
+        case OpCode::StoreLocal:
             locals_vars_.push_back(pop());
             break;
-        }
         case OpCode::LoadLocal:
             push(locals_vars_.at(token.p1->i()));
+            break;
+        case OpCode::StoreGlobal:
+            global_vars_.at(token.p1->i()) = pop();
+            break;
+        case OpCode::LoadGlobal:
+            push(global_vars_.at(token.p1->i()));
             break;
         case OpCode::Halt:
             return false;

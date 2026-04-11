@@ -22,7 +22,7 @@ public:
     RotaVM();
 
     // execution
-    void set_executable(Executable const& exec) { exec_ = exec; }
+    void set_executable(Executable const& exec);
     void run_until_halt();
 
     // debug
@@ -36,14 +36,15 @@ private:
         size_t     addr;
     };
 
-    Executable                  exec_;              // executable code
-    std::vector<Value>          stack_ {};          // operational stack
-    std::stack<Address>         call_stack_;        // stack of calls
+    Executable           exec_;              // executable code
+    std::vector<Value>   stack_ {};          // operational stack
+    std::stack<Address>  call_stack_;        // stack of calls
 
-    std::vector<Value>          locals_vars_;       // stack of variables
+    std::vector<Value>   locals_vars_;       // stack of variables
+    std::vector<Value>   global_vars_;       // list of globals
 
-    Value                       last_value_;        // last pushed value (used only for debugging)
-    const OpTable               op_table;           // table of operations (ALU)
+    Value                last_value_;        // last pushed value (used only for debugging)
+    const OpTable        op_table;           // table of operations (ALU)
 
     bool step();
 

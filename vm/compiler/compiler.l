@@ -16,6 +16,7 @@ func                { return FUNC; }
 return              { return RETURN; }
 -?[0-9]*\.[0-9]+f   { yylval->f = std::stof(yytext); return FLOAT; }
 -?[0-9]+            { yylval->i = atoi(yytext); return INTEGER; }
+\$[A-Za-z_]+        { yylval->s = strdup(yytext); return GLOBAL; }
 [A-Za-z_]+          { yylval->s = strdup(yytext); return IDENTIFIER; }
 \/\/                { return DSLASH; }
 ==                  { return EQ; }

@@ -68,6 +68,31 @@ void Executable::load_identifier(std::string const& identifier)
         throw std::runtime_error("Unknown identifier '" + identifier + "'");
 }
 
+void Executable::global_assignment(std::string const& global)
+{
+    auto it = globals_.find(global);
+    size_t global_idx;
+    if (it != globals_.end()) {
+        // assignment of an existing global
+        global_idx = it->second;
+    } else {
+        // assignment of a new global
+        global_idx = globals_.size();
+        globals_[global] = global_idx;
+    }
+
+    add(OpCode::StoreGlobal, Value((int) global_idx), global);
+}
+
+void Executable::load_global(std::string const& global)
+{
+    auto it = globals_.find(global);
+    if (it != globals_.end())
+        add(OpCode::LoadGlobal, Value((int) it->second), global);
+    else
+        throw std::runtime_error("Unknown global '" + global + "'");
+}
+
 std::string Executable::debug() const
 {
     std::string out;

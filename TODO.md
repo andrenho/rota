@@ -78,7 +78,7 @@ Things included in the VM:
 - [x] Local variables
   - [x] Multiple memories
   - [x] Scopes
-- [ ] Globals
+- [x] Globals
 - [ ] Function parameters
   - [ ] Call function with parameters
 - [ ] Control flow

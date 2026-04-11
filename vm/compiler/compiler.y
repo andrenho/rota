@@ -31,7 +31,7 @@ void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s);
 %token DSLASH EQ NEQ GT_EQ LT_EQ
 %token <i> INTEGER
 %token <f> FLOAT
-%token <s> IDENTIFIER
+%token <s> IDENTIFIER GLOBAL
 %left AND OR
 %left EQ NEQ GT_EQ LT_EQ '<' '>'
 %left '+' '-'
@@ -53,6 +53,7 @@ expression: '{' { exec.push_scope(); } expressions { exec.pop_scope(); } '}'
           | expr ';'                { exec.add(OpCode::Pop); }
           | RETURN expr ';'         { exec.add(OpCode::Return); }
           | IDENTIFIER '=' expr ';' { exec.assignment($1); free($1); }
+          | GLOBAL '=' expr ';'     { exec.global_assignment($1); free($1); }
           | ';'
           ;
 
@@ -76,6 +77,7 @@ expr: function_def
     | '(' expr ')'
     | expr '(' ')'          { exec.add(OpCode::Call, Value(0)); }
     | IDENTIFIER            { exec.load_identifier($1); free($1); }
+    | GLOBAL                { exec.load_global($1); free($1); }
     | INTEGER               { exec.add(OpCode::Push, Value($1)); }
     | FLOAT                 { exec.add(OpCode::Push, Value($1)); }
     | NIL                   { exec.add(OpCode::Push, Value()); }

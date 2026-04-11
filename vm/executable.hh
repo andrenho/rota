@@ -48,13 +48,18 @@ public:
     void assignment(std::string const& identifier);
     void load_identifier(std::string const& identifier);
 
+    void global_assignment(std::string const& global);
+    void load_global(std::string const& global);
+
     [[nodiscard]] Token token(FunctionId f_id, size_t pos) const { return functions_.at(f_id).tokens.at(pos); }
+    [[nodiscard]] size_t number_of_globals() const { return globals_.size(); }
 
     [[nodiscard]] std::string debug() const;
 
 private:
     size_t current_function_ = 0;
     std::vector<Function> functions_ = { { /* main */ } };
+    std::unordered_map<std::string, size_t> globals_;
 };
 
 }
