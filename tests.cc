@@ -142,6 +142,10 @@ int main(int argc, char* argv[])
 
     // local variables on functions
 
+    test("func() {\n a = 42; return a;\n }();\n", 42);
+    test_fail("func() {\n a = 42; return a;\n }(); a;\n");
+    test("a = 12; func() {\n a = 42; return a;\n }(); a;\n", 12);
+
     // global functions
 
     // function parameters
