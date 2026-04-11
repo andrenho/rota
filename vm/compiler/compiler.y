@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <string>
 #include <sstream>
+#include <vector>
 
 #include "lexer.yy.hh"
 
@@ -27,6 +28,7 @@ using namespace rotavm;
 void yyerror(yyscan_t scanner, rotavm::Executable&, const char *s);
 
 size_t par_count = 0;
+std::vector<std::string> fn_pars;
 %}
 
 %token AND OR NIL FUNC RETURN
@@ -70,10 +72,20 @@ primary
     | primary '(' { par_count = 0; } parameters ')' { exec.add(OpCode::Call, Value((int)par_count)); }
     ;
 
-function_def: FUNC '(' function_parameters ')' { exec.add_function(); } '{'
+function_def: FUNC '(' { fn_pars.clear(); } function_parameters ')' { exec.add_function(fn_pars); } '{'
                    expressions
               '}' { exec.end_function(); }
             ;
+
+function_parameters: function_parameters ',' IDENTIFIER  { fn_pars.push_back($3); }
+                   | IDENTIFIER                          { fn_pars.push_back($1); }
+                   |
+                   ;
+
+parameters: parameters ',' expr { ++par_count; }
+          | expr                { ++par_count; }
+          |
+          ;
 
 expr: primary
     | '!' expr                  { exec.add(OpCode::Not); }
@@ -93,16 +105,6 @@ expr: primary
     | expr AND expr             { exec.add(OpCode::And); }
     | expr OR expr              { exec.add(OpCode::Or); }
     ;
-
-parameters: parameters ',' expr { ++par_count; }
-          | expr                { ++par_count; }
-          |
-          ;
-
-function_parameters: function_parameters ',' IDENTIFIER
-                   | IDENTIFIER
-                   |
-                   ;
 
 %%
 

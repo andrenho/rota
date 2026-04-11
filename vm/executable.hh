@@ -39,7 +39,7 @@ public:
     void add(OpCode opcode);
     void add(OpCode opcode, rotavm::Value const& p1, std::optional<std::string> const& var_name={});
 
-    void add_function();
+    void add_function(std::vector<std::string> const& parameter_names);
     void end_function();
 
     void push_scope();

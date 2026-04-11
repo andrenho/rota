@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include <functional>
+#include <ranges>
 
 #include "rotavm.hh"
 #include "exceptions.hh"
@@ -134,10 +135,7 @@ inline bool RotaVM::step()
             push(op_table.execute(UnaryOp::Not, pop()));
             break;
         case OpCode::Call: {
-            Value v = pop();
-            if (v.type() != T_FUNCTION)
-                throw std::runtime_error("Can't call non-function value");
-            enter_function(v.functionId(), token.p1->i());
+            function_call(token.p1->i());
             return true;
         }
         case OpCode::Return:
@@ -170,11 +168,26 @@ inline bool RotaVM::step()
 }
 #pragma clang diagnostic pop
 
-void RotaVM::enter_function(FunctionId f_id, size_t param_count)
+void RotaVM::function_call(size_t param_count)
 {
-    ++addr();
+    // create new variable context
     local_vars_fp_.push(locals_vars_.size());
-    call_stack_.push({ .f_id = f_id, .addr = 0, .param_count = param_count });
+
+    // get function parameters from the stack, and add it in the reverse order to the function variables
+    std::vector<Value> pars;
+    for (size_t i = 0; i < param_count; ++i)
+        pars.push_back(pop());
+    for (auto& par : std::ranges::reverse_view(pars))
+        locals_vars_.push_back(par);
+
+    // find function id
+    Value v = pop();
+    if (v.type() != T_FUNCTION)
+        throw std::runtime_error("Can't call non-function value");
+
+    // save current state and enter new context
+    ++addr();
+    call_stack_.push({ .f_id = (FunctionId) v.i(), .addr = 0 });
 }
 
 void RotaVM::return_from_function()
