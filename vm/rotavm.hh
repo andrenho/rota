@@ -7,6 +7,7 @@
 #include <array>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "value.hh"
 #include "vm/compiler/compiler.hh"
@@ -18,38 +19,45 @@ namespace rotavm {
 
 class RotaVM {
 public:
+    RotaVM();
+
     // execution
     void set_executable(Executable const& exec) { exec_ = exec; }
     void run_until_halt();
 
     // debug
     [[nodiscard]] Value const& last_value() const { return last_value_; }
-    [[nodiscard]] size_t       stack_sz() const { return stack_idx_; }
+    [[nodiscard]] size_t       stack_sz() const { return stack_.size(); }
     [[nodiscard]] std::string  debug_stack() const;
 
 private:
-    std::array<Value, STACK_SZ> stack_ {};
-    size_t                      stack_idx_ = 0;
-    Executable                  exec_;
-    FunctionId                  current_function_ = 0;
-    Value                       last_value_;
-    uint32_t                    PC_ = 0;
-
-    struct CallStackElement {
+    struct Address {
         FunctionId f_id;
-        uint32_t   PC;
+        size_t     addr;
     };
-    std::stack<CallStackElement> call_stack_;
 
-    const OpTable op_table;
+    Executable                  exec_;              // executable code
+    std::vector<Value>          stack_ {};          // operational stack
+    std::stack<Address>         call_stack_;        // stack of calls
+
+    std::vector<Value>          locals_vars_;       // stack of variables
+
+    Value                       last_value_;        // last pushed value (used only for debugging)
+    const OpTable               op_table;           // table of operations (ALU)
 
     bool step();
+
+    void enter_function(FunctionId f_id);
+    void return_from_function();
 
     // stack manipulation
     void         push(Value const& value);
     void         push(bool v) { push(Value(v ? -1 : 0)); }
     Value        pop();
     Value        peek();
+
+    [[nodiscard]] FunctionId current_function() const { return call_stack_.top().f_id; }
+    [[nodiscard]] size_t& addr() { return call_stack_.top().addr; }
 };
 
 }

@@ -41,13 +41,35 @@ static void test(std::string const& code, T const& v_expected)
     }
 }
 
+static void test_fail(std::string const& code)
+{
+    printf("-----------------------------\n");
+    printf("%s\n", code.c_str());
+
+    rotavm::RotaVM vm;
+    try {
+        auto executable = rotavm::compile(code);
+        vm.set_executable(executable);
+
+        if (debug)
+            printf("%s\n", executable.debug().c_str());
+
+        vm.run_until_halt();
+
+    } catch (std::exception& e) {
+        printf("  --> \e[0;32mok (%s)\e[0m\n", e.what());
+        return;
+    }
+
+    printf("  --> \e[0;31mTest was supposed to fail\e[0m\n");
+}
+
 int main(int argc, char* argv[])
 {
     debug = (argc == 2 && std::string(argv[1]) == "-d");
 
     // arithmetic
 
-    /*
     test("500;", 500);
     test("500 + 30;", 530);
     test("1.2f + 4;", 5.2f);
@@ -64,6 +86,8 @@ int main(int argc, char* argv[])
     test("5 ^ 3;", 125);
     test("2 / 4;", 0.5f);
     test("5 // 4;", 1);
+
+    test_fail("3 4");
 
     // logic
 
@@ -95,13 +119,34 @@ int main(int argc, char* argv[])
     test("nil;", rotavm::Value());
     test("nil && true;", 0);
     test("nil || true;", -1);
+    test("500;;;", 500);
 
     // multiple expressions
 
     test("42; 3 + 4;", 7);
-     */
 
     // functions
 
     test("func() {\n return 42;\n }();\n", 42);
+
+    // local variables
+
+    test("a = 42; a;", 42);
+    test("a = 42; b = 12; a;", 42);
+    test("a = 42; b = 12; b;", 12);
+
+    // local variables on scopes
+
+    test("a = 42; { b = 10; }; a;", 42);
+    test_fail("a = 42; { b = 10; }; b;");
+
+    // local variables on functions
+
+    test("func() {\n a = 42; return a;\n }();\n", 42);
+    test_fail("func() {\n a = 42; return a;\n }(); a;\n");
+    test("a = 12; func() {\n a = 42; return a;\n }(); a;\n", 12);
+
+    // global functions
+
+    // function parameters
 }

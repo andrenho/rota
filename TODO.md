@@ -36,7 +36,7 @@ Things included in the VM:
 
 ## Hardware
 
-- Version A - connects to a PC
+- Version A - connects to a addr
   - Pico Pi 2 W
     - 1 core running VM
   - SDCard
@@ -75,18 +75,29 @@ Things included in the VM:
   - [x] Reorganize code
   - [x] Executable smaller, pair opcode with argument
   - [x] Basic function call
-- [ ] Local variables
-  - [ ] Multiple memories
-  - [ ] Function parameters
+- [x] Local variables
+  - [x] Multiple memories
+  - [x] Scopes
+- [ ] Globals
+- [ ] Function parameters
   - [ ] Call function with parameters
 - [ ] Control flow
-- [ ] Strings
   - [ ] Fixed strings
-- [ ] Bitwise operators (maybe byte type?)
+- [ ] Strings
 - [ ] Tables + GC
-- [ ] Globals
+  - [ ] Metamethods (?)
+  - [ ] Arrays
+- [ ] Bitwise operators (maybe byte type?)
 - [ ] Error handling
 - [ ] Closures
+
+Debugger
+- [ ] Count memory usage
+
+Memory/performance improvements
+- [ ] Compact executable class
+- [ ] Compact values (for variables)
+- [ ] Multiple pushes (for each type)
 
 # Phase 2 - serial prototype
 

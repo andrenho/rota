@@ -31,10 +31,10 @@ public:
     explicit Value(float f) : type_(T_FLOAT), f_(f) {}
     explicit Value(Function const& fn) : type_(T_FUNCTION), fn_(fn) {}
 
-    [[nodiscard]] Type  type() const { return type_; }
-    [[nodiscard]] int   i() const { return i_; }
-    [[nodiscard]] float f() const { return f_; }
-    [[nodiscard]] float functionId() const { return fn_.id; }
+    [[nodiscard]] Type       type() const { return type_; }
+    [[nodiscard]] int        i() const { return i_; }
+    [[nodiscard]] float      f() const { return f_; }
+    [[nodiscard]] FunctionId functionId() const { return fn_.id; }
 
     [[nodiscard]] std::string debug() const
     {
