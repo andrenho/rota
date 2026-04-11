@@ -48,8 +48,8 @@ private:
 
     bool step();
 
-    void push_scope();
-    void pop_scope();
+    void enter_function(FunctionId f_id);
+    void return_from_function();
 
     // stack manipulation
     void         push(Value const& value);
