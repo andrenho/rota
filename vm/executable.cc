@@ -14,11 +14,19 @@ void Executable::add(OpCode opcode, Value const& p1, std::optional<std::string> 
     functions_.at(current_function_).tokens.emplace_back(opcode, p1, var_name);
 }
 
-void Executable::add_function()
+void Executable::add_function(std::vector<std::string> const& parameter_names)
 {
+    // add function
     functions_.at(current_function_).tokens.emplace_back(OpCode::Push, Value(rotavm::Function(current_function_ + 1)));
     auto it = functions_.emplace_back();
     ++current_function_;
+
+    // add parameters
+    auto& f = functions_.at(current_function_);
+    for (size_t i = 0; i < parameter_names.size(); ++i) {
+        f.variables.back()[parameter_names.at(i)] = i;
+        ++f.total_variables;
+    }
 }
 
 void Executable::end_function()
