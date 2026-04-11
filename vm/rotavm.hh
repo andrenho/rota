@@ -41,7 +41,6 @@ private:
     std::stack<Address>         call_stack_;        // stack of calls
 
     std::vector<Value>          locals_vars_;       // stack of variables
-    std::stack<size_t>          fp_local_vars_;     // start counter of variables in the current context
 
     Value                       last_value_;        // last pushed value (used only for debugging)
     const OpTable               op_table;           // table of operations (ALU)

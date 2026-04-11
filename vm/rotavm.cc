@@ -14,7 +14,6 @@ namespace rotavm {
 
 RotaVM::RotaVM()
 {
-    fp_local_vars_.push(0);
     call_stack_.push({ 0, 0 });
 }
 
@@ -138,12 +137,10 @@ inline bool RotaVM::step()
             return_from_function();
             return true;
         case OpCode::StoreLocal: {
-            // TODO - check fp
             locals_vars_.push_back(pop());
             break;
         }
         case OpCode::LoadLocal:
-            // TODO - check fp
             push(locals_vars_.at(token.p1->i()));
             break;
         case OpCode::Halt:
@@ -161,13 +158,11 @@ void RotaVM::enter_function(FunctionId f_id)
 {
     ++addr();
     call_stack_.push({ .f_id = f_id, .addr = 0 });
-    fp_local_vars_.push(0);
 }
 
 void RotaVM::return_from_function()
 {
     // TODO - remove variables from scope
-    fp_local_vars_.pop();
     call_stack_.pop();
 }
 
