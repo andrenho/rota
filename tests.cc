@@ -135,6 +135,8 @@ int main(int argc, char* argv[])
     test("a = 42; b = 12; a;", 42);
     test("a = 42; b = 12; b;", 12);
     test("a = func() { return 38; } a();", 38);
+    test("a = 12; func() { a = 4; return a; }();", 4);
+    test("a = 12; func() { a = 4; return a; }(); a;", 12);
 
     // local variables on scopes
 
@@ -155,6 +157,5 @@ int main(int argc, char* argv[])
 
     // function parameters
 
-    test("a = 12; func() { a = 4; return a; }();", 4);
     // test("func(a) { return 10 + 1; }(12);", 13);
 }
