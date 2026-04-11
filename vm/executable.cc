@@ -15,7 +15,8 @@ void Executable::add(OpCode opcode, Value const& p1, std::optional<std::string> 
 void Executable::add_function()
 {
     functions_.at(current_function_).tokens.emplace_back(OpCode::Push, Value(rotavm::Function(current_function_ + 1)));
-    functions_.emplace_back();
+    auto it = functions_.emplace_back();
+    it.var_idx_stack.push(0);
     ++current_function_;
 }
 
@@ -28,12 +29,10 @@ void Executable::end_function()
 
 void Executable::push_scope()
 {
-
 }
 
 void Executable::pop_scope()
 {
-
 }
 
 void Executable::assignment(std::string const& identifier)

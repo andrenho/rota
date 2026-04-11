@@ -89,6 +89,9 @@ Things included in the VM:
 - [ ] Error handling
 - [ ] Closures
 
+Debugger
+- [ ] Count memory usage
+
 Memory/performance improvements
 - [ ] Compact executable class
 - [ ] Compact values (for variables)

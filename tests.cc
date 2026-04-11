@@ -142,5 +142,7 @@ int main(int argc, char* argv[])
 
     // local variables on functions
 
+    // global functions
+
     // function parameters
 }
