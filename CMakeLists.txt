@@ -25,10 +25,10 @@ ADD_FLEX_BISON_DEPENDENCY(compiler_lexer compiler_parser)
 
 set(VM_SRC
         ${BISON_compiler_parser_OUTPUTS} ${FLEX_compiler_lexer_OUTPUTS}
-        assembly/assembly.cc
-        assembly/assembly.hh
-        assembly/assemblybuilder.cc
-        assembly/assemblybuilder.hh
+        assembly/bytecode.cc
+        assembly/bytecode.hh
+        assembly/bc_generator.cc
+        assembly/bc_generator.hh
         compiler/compiler.cc
         compiler/compiler.hh
         vm/vm.cc

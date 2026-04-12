@@ -1,0 +1,12 @@
+16 * section [4 bytes]:
+  Section: [4 bytes - address]
+
+Section Magic [00]
+  - Needs to be the first
+  - Must be FF A9 B8 C7
+Section Code [01]
+  - List of instructions
+Empty [00]
+  - Indicates no instruction
+
+The section next to last must contain the ending address.
