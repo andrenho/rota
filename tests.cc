@@ -16,6 +16,7 @@ static void validate_vm() {
     VM vm; vm.set_bytecode(std::move(bs));
     std::cout << "Execution:\n";
     vm.run_debug_console();
+    std::cout << "------------------------\n";
 }
 
 int main(int argc, char* argv[])
