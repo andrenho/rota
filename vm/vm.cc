@@ -1,8 +1,11 @@
 #include "vm.hh"
 
 #include <cstdio>
+#include <string>
 
 #include "vmexceptions.hh"
+
+using namespace std::string_literals;
 
 void VM::run(std::function<void(size_t)> const& after_each_instruction)
 {
@@ -25,15 +28,7 @@ void VM::run_debug_console()
         printf("PC: %zu\n", pc);
         printf("  Instruction: %s\n", bytecode_->decompile_instruction_at(pc).c_str());
 
-        printf("  Stack:");
-        if (stack_.empty()) {
-            printf(" empty");
-        } else {
-            for (auto const& value: stack_)
-                printf(" [%s]", format_value(value).c_str());
-        }
-        printf("\n");
-
+        printf("  Stack: %s\n", debug_stack().c_str());
     });
 }
 
@@ -48,4 +43,22 @@ void VM::step()
             throw VMInvalidOpcodeException();
     }
     pc_ += sz;
+}
+
+std::string VM::debug_stack() const
+{
+    auto format_value = [](Value const& value) -> std::string {
+        if (auto* i = std::get_if<int32_t>(&value))
+            return std::to_string(*i);
+        return "???";
+    };
+
+    if (stack_.empty()) {
+        return "empty";
+    } else {
+        std::string out;
+        for (auto const& value: stack_)
+            out += "["s + format_value(value) + "] ";
+        return out;
+    }
 }

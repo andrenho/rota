@@ -1,12 +1,13 @@
 %define parse.trace
 
 %code requires {
+    #include "bytecode/bytecode.hh"
     typedef void *yyscan_t;
 }
 
 %define api.pure full
 %param { yyscan_t scanner }
-// %parse-param { rotavm::Executable& exec }
+%parse-param { Bytecode* bc }
 
 %union {
     int   i;
@@ -22,7 +23,7 @@
 
 #include "lexer.yy.hh"
 
-void yyerror(yyscan_t scanner, const char *s);
+void yyerror(yyscan_t scanner, Bytecode* bc, const char *s);
 
 %}
 
@@ -48,6 +49,6 @@ program:
 
 %%
 
-void yyerror(yyscan_t scanner, const char *s) {
+void yyerror(yyscan_t scanner, Bytecode* bc, const char *s) {
     throw std::runtime_error(std::string("error: ") + s);
 }

@@ -2,7 +2,7 @@
 
 %code requires {
     typedef void *yyscan_t;
-    #include "vm/compiler/compiler.hh"
+    #include "compiler/compiler.hh"
 }
 
 %define api.pure full
