@@ -25,14 +25,14 @@ ADD_FLEX_BISON_DEPENDENCY(compiler_lexer compiler_parser)
 
 set(VM_SRC
         ${BISON_compiler_parser_OUTPUTS} ${FLEX_compiler_lexer_OUTPUTS}
-        assembly/bytecode.cc
-        assembly/bytecode.hh
-        assembly/bc_generator.cc
-        assembly/bc_generator.hh
         compiler/compiler.cc
         compiler/compiler.hh
         vm/vm.cc
-        vm/vm.hh)
+        vm/vm.hh
+        bytecode/bytecode.hh
+        bytecode/bytecodesimple.hh
+        bytecode/bytecode.cc
+        vm/vmexceptions.hh)
 
 add_executable(rota-vm-test
         tests.cc
