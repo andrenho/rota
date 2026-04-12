@@ -1,0 +1,4 @@
+#ifndef ROTA_COMPILER_HH
+#define ROTA_COMPILER_HH
+
+#endif //ROTA_COMPILER_HH
