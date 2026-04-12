@@ -1,4 +1,5 @@
 %define parse.trace
+%define parse.error verbose
 
 %code requires {
     #include "bytecode/bytecode.hh"
@@ -28,7 +29,7 @@ void yyerror(yyscan_t scanner, Bytecode* bc, const char *s);
 %}
 
 %token AND OR NIL FUNC RETURN
-%token DSLASH EQ NEQ GT_EQ LT_EQ
+%token DSLASH EQ NEQ GT_EQ LT_EQ DEBUG
 %token <i> INTEGER
 %token <f> FLOAT
 %token <s> IDENTIFIER GLOBAL
@@ -40,12 +41,19 @@ void yyerror(yyscan_t scanner, Bytecode* bc, const char *s);
 %right '^'
 %right '!'
 
-%start program
+%start statements
 
 %%
 
-program: 
-       ;
+statements: statements statement
+          | statement
+          ;
+
+statement: DEBUG expr ';'               { bc->add(Operation::SaveDebug); }
+         ;
+
+expr: INTEGER                           { bc->add(Operation::PushInt, $1); }
+    ;
 
 %%
 

@@ -19,6 +19,7 @@ return              { return RETURN; }
 \$[A-Za-z_]+        { yylval->s = strdup(yytext); return GLOBAL; }
 [A-Za-z_]+          { yylval->s = strdup(yytext); return IDENTIFIER; }
 \/\/                { return DSLASH; }
+@=                  { return DEBUG; }
 ==                  { return EQ; }
 !=                  { return NEQ; }
 >=                  { return GT_EQ; }

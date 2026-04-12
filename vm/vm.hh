@@ -15,17 +15,21 @@ public:
     void run(std::function<void(size_t)> const& after_each_instruction=[](size_t){});
     void run_debug_console();
 
-    [[nodiscard]] Value last_value_popped() const { return last_value_popped_; }
     [[nodiscard]] size_t stack_sz() const { return stack_.size(); }
     [[nodiscard]] std::string debug_stack() const;
+    [[nodiscard]] Value const& debug_saved() const { return debug_saved_; }
 
 private:
     std::unique_ptr<Bytecode> bytecode_;
     size_t                    pc_ = 0;
     std::vector<Value>        stack_;
-    Value                     last_value_popped_;
+    Value                     debug_saved_;
 
     void step();
+};
+
+namespace std {
+std::string to_string(VM::Value const& value);
 };
 
 #endif //ROTA_VM_HH

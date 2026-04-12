@@ -6,7 +6,8 @@
 #include <variant>
 
 enum class Operation {
-    PushInt,
+    PushInt, Pop,
+    SaveDebug,
 };
 
 class Bytecode {

@@ -25,6 +25,10 @@ std::string Bytecode::decompile_instruction_at(size_t pc, size_t* psz) const
     switch (inst.operation) {
         case Operation::PushInt:
             return "PUSHI "s + std::to_string(std::get<int32_t>(*inst.operand1));
+        case Operation::SaveDebug:
+            return "DEBUG";
+        case Operation::Pop:
+            return "POP";
         default:
             return "???";
     }
