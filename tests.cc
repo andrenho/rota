@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
 {
     debug = (argc == 2 && std::string(argv[1]) == "-d");
 
+    /*
     // arithmetic
 
     test("500;", 500);
@@ -161,4 +162,11 @@ int main(int argc, char* argv[])
     test("func(a, b) { return a + b; }(4, 3);", 7);
     test("func(a, b) { return a // b; }(8, 2);", 4);
     test("sum = func(a, b) { return a + b; } sum(8, 2);", 10);
+    */
+
+    // return function from function
+
+    test("a = func() { return func() { return 4; }; }; a()();", 4);
+
+    // test("a = func() { return func() { return 42; }; }; b = a(); b();", 42);
 }
