@@ -26,6 +26,7 @@
 
 void yyerror(yyscan_t scanner, Bytecode* bc, const char *s);
 
+Bytecode::FunctionId f_id = 0;
 %}
 
 %token AND OR NIL FUNC RETURN
@@ -49,10 +50,10 @@ statements: statements statement
           | statement
           ;
 
-statement: DEBUG expr ';'               { bc->add(Operation::SaveDebug); }
+statement: DEBUG expr ';'               { bc->add(f_id, Operation::SaveDebug); }
          ;
 
-expr: INTEGER                           { bc->add(Operation::PushInt, $1); }
+expr: INTEGER                           { bc->add(f_id, Operation::PushInt, $1); }
     ;
 
 %%

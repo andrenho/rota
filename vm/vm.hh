@@ -24,6 +24,7 @@ private:
     size_t                    pc_ = 0;
     std::vector<Value>        stack_;
     Value                     debug_saved_;
+    size_t                    f_id_ = 0;
 
     void step();
 };

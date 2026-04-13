@@ -13,7 +13,7 @@ using VMType = BytecodeSimple;
 static void validate_vm()
 {
     auto bs = std::make_unique<BytecodeSimple>();
-    bs->add(Operation::PushInt, 500);
+    bs->add(0, Operation::PushInt, 500);
     std::cout << "Compiled code:\n";
     std::cout << bs->decompile_bytecode();
 

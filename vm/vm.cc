@@ -9,7 +9,7 @@ using namespace std::string_literals;
 
 void VM::step()
 {
-    auto [inst, sz] = bytecode_->next_instruction(pc_);
+    auto [inst, sz] = bytecode_->next_instruction(f_id_, pc_);
     switch (inst.operation) {
         case Operation::PushInt:
             stack_.emplace_back(std::get<int32_t>(*inst.operand1));
@@ -29,7 +29,7 @@ void VM::step()
 
 void VM::run(std::function<void(size_t)> const& after_each_instruction)
 {
-    while (pc_ < bytecode_->last_pc()) {
+    while (pc_ < bytecode_->last_pc(f_id_)) {
         size_t pc = pc_;
         step();
         after_each_instruction(pc);
@@ -46,7 +46,7 @@ void VM::run_debug_console()
 
     run([this, &format_value](size_t pc) {
         printf("PC: %zu\n", pc);
-        printf("  Instruction: %s\n", bytecode_->decompile_instruction_at(pc).c_str());
+        printf("  Instruction: %s\n", bytecode_->decompile_instruction_at(f_id_, pc).c_str());
         printf("  Stack: %s\n", debug_stack().c_str());
     });
 }
