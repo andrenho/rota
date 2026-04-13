@@ -42,3 +42,4 @@ Bytecode::FunctionId Bytecode::add_function(std::optional<std::string> const& na
 {
     return function_ct++;
 }
+

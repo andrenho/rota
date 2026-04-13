@@ -38,7 +38,7 @@ public:
     [[nodiscard]] std::string decompile_instruction_at(FunctionId f_id, size_t pc, size_t* sz=nullptr) const;
 
 private:
-    size_t function_ct = 0;
+    size_t function_ct = 1;
 };
 
 #endif //ROTA_BYTECODE_HH
